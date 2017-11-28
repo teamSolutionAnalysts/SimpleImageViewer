@@ -31,6 +31,7 @@
 		A0BF70BA1EDC75AE00109F6E /* ImageViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A07E76ED1ECC959700B77D46 /* ImageViewerController.xib */; };
 		A0BF70BB1EDC75AE00109F6E /* ImageViewer-Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A07E77231ECF289800B77D46 /* ImageViewer-Assets.xcassets */; };
 		A0BF70BC1EDC767B00109F6E /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07E77211ECF1FC100B77D46 /* HeaderView.swift */; };
+		A7BDA87A1FCD688600D36FD1 /* SegmentedProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BDA8791FCD688600D36FD1 /* SegmentedProgressBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		A08B781B1EF1674200F8C5BC /* ImageViewerDismissalInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewerDismissalInteractor.swift; sourceTree = "<group>"; };
 		A0BF70A71EDC5B1400109F6E /* SimpleImageViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleImageViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0BF70A91EDC5B1400109F6E /* ImageViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewer.h; sourceTree = "<group>"; };
+		A7BDA8791FCD688600D36FD1 /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +190,7 @@
 		A08B781E1EF16CCF00F8C5BC /* ImageViewerController */ = {
 			isa = PBXGroup;
 			children = (
+				A7BDA8791FCD688600D36FD1 /* SegmentedProgressBar.swift */,
 				A05E9FA41EF7FB640024CF47 /* ImageViewerConfiguration.swift */,
 				A07E76EB1ECC94EA00B77D46 /* ImageViewerController.swift */,
 				A07E76ED1ECC959700B77D46 /* ImageViewerController.xib */,
@@ -386,6 +389,7 @@
 				A02EE5CF1EF172C8000EAB41 /* Utilities.swift in Sources */,
 				A0BF70B61EDC758300109F6E /* ImageViewerDismissalTransition.swift in Sources */,
 				A0BF70B71EDC758300109F6E /* ImageViewerController.swift in Sources */,
+				A7BDA87A1FCD688600D36FD1 /* SegmentedProgressBar.swift in Sources */,
 				A08B781D1EF1684600F8C5BC /* ImageViewerDismissalInteractor.swift in Sources */,
 				A05E9FA51EF7FB640024CF47 /* ImageViewerConfiguration.swift in Sources */,
 				A0BF70B81EDC758300109F6E /* AnimatableImageView.swift in Sources */,

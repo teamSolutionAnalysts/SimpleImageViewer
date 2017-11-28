@@ -40,12 +40,22 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! ImageCell
-        
-        let configuration = ImageViewerConfiguration { config in
-            config.imageView = cell.imageView
+        let  feed = feedContant{ feeds in
+            if indexPath.row == 0{
+                feeds.mediaType = mediaType.image
+            } else {
+                feeds.mediaType = mediaType.video
+            }
+            
         }
         
-        present(ImageViewerController(configuration: configuration), animated: true)
+        let configuration = ImageViewerConfiguration { config in
+           config.imageView = cell.imageView
+            
+           
+        }
+        
+        present(ImageViewerController(configuration: configuration, contant: feed), animated: true)
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
