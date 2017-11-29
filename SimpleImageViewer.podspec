@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.license = { :type => "MIT", :file => "LICENSE" }
   s.author = { "Lucas" => "lucas@afrogleap.com" }
   s.homepage = "https://github.com/aFrogleap/SimpleImageViewer"
-  s.source = { :git => "https://github.com/aFrogleap/SimpleImageViewer.git", :tag => s.version.to_s }
+  s.source = { :git => "https://github.com/teamSolutionAnalysts/SimpleImageViewer.git", :branch => "podWith" }
   s.source_files = "ImageViewer/**/*.{swift}"
   s.resources = ["ImageViewer/**/*.{xib}", "ImageViewer/**/*.{xcassets}"]
 
