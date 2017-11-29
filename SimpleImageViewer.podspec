@@ -11,6 +11,5 @@ Pod::Spec.new do |s|
   s.source = { :git => "https://github.com/teamSolutionAnalysts/SimpleImageViewer.git" }
   s.source_files = "ImageViewer/**/*.{swift}"
   s.resources = ["ImageViewer/**/*.{xib}", "ImageViewer/**/*.{xcassets}"]
-
-
+  s.dependency 'Kingfisher'
 end
