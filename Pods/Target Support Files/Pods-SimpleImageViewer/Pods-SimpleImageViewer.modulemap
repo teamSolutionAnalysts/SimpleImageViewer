@@ -1,0 +1,6 @@
+framework module Pods_SimpleImageViewer {
+  umbrella header "Pods-SimpleImageViewer-umbrella.h"
+
+  export *
+  module * { export * }
+}
