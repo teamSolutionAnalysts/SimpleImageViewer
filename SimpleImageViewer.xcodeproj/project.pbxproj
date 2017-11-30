@@ -94,6 +94,7 @@
 		A08B781B1EF1674200F8C5BC /* ImageViewerDismissalInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewerDismissalInteractor.swift; sourceTree = "<group>"; };
 		A0BF70A71EDC5B1400109F6E /* SimpleImageViewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleImageViewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0BF70A91EDC5B1400109F6E /* ImageViewer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageViewer.h; sourceTree = "<group>"; };
+		A794E29C1FCEBB8100AE6075 /* Kingfisher.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Kingfisher.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7BDA8791FCD688600D36FD1 /* SegmentedProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedProgressBar.swift; sourceTree = "<group>"; };
 		C4D61E8A0CFCB6970A591D20 /* Pods-SimpleImageViewer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimpleImageViewer.release.xcconfig"; path = "Pods/Target Support Files/Pods-SimpleImageViewer/Pods-SimpleImageViewer.release.xcconfig"; sourceTree = "<group>"; };
 		CD665A9CB5F983887D46546B /* Pods_SimpleImageViewerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SimpleImageViewerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -246,6 +247,7 @@
 		A67EEAD4FFD5BD860F5D1712 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A794E29C1FCEBB8100AE6075 /* Kingfisher.framework */,
 				0AD7802FA8AA04027B9B177A /* Pods_Example.framework */,
 				1A0D329938158A948C2083FF /* Pods_SimpleImageViewer.framework */,
 				CD665A9CB5F983887D46546B /* Pods_SimpleImageViewerTests.framework */,

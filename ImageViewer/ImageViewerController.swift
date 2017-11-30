@@ -1,11 +1,13 @@
 import UIKit
 import AVFoundation
 import AVKit
+import Kingfisher
 public final class ImageViewerController: UIViewController {
     @IBOutlet fileprivate var scrollView: UIScrollView!
     @IBOutlet fileprivate var imageView: UIImageView!
     @IBOutlet fileprivate var activityIndicator: UIActivityIndicatorView!
     var playerController : AVPlayerViewController?
+    @IBOutlet weak var topArea: UIView!
     var playerLayer: AVPlayerLayer?
     @IBOutlet weak var imgOwner: UIImageView!
     @IBOutlet weak var lblOwnerName: UILabel!
@@ -17,6 +19,12 @@ public final class ImageViewerController: UIViewController {
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
     
+    @IBOutlet weak var bottomGradiant: UIView!
+    @IBOutlet weak var lblDiscription: UILabel!
+    @IBOutlet weak var lblcmt: UILabel!
+    @IBOutlet weak var lblLike: UILabel!
+    @IBOutlet weak var activateStoryBottom: UIView!
+    @IBOutlet weak var bottomArea: UIView!
     public override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -30,33 +38,46 @@ public final class ImageViewerController: UIViewController {
         modalTransitionStyle = .crossDissolve
         modalPresentationCapturesStatusBarAppearance = true
     }
-    
-    
-    
+
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        setupBottom()
+        stupeOwnerDetail()
+        setupFeedDetail()
         imageView.image = configuration?.imageView?.image ?? configuration?.image
         
         setupScrollView()
         setupGestureRecognizers()
         setupTransitions()
         setupActivityIndicator()
-       
-        
-        
-
-        
     }
+    @IBAction func btntestA(_ sender: UIButton) {
+        
+        if self.configuration?.actiondelegate != nil {
+            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: (self.feedcontant?.feedId)!)
+        }
+    }
+    @IBAction func swichAction(_ sender: UISwitch) {
+        print(sender.isOn)
+        if self.configuration?.actiondelegate != nil {
+            self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: (self.feedcontant?.feedId)!)
+        }
+    }
+    
     deinit {
         
         NotificationCenter.default.removeObserver(self)
     }
     public override func viewWillAppear(_ animated: Bool) {
-         self.setupSegmentedProgressBar()
+        setupSegmentedProgressBar()
+        DispatchQueue.main.async {
+           self.setupGradiant()
+        }
+        
     }
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if object is AVPlayerItem {
@@ -64,15 +85,24 @@ public final class ImageViewerController: UIViewController {
             case "playbackBufferEmpty"?:
                 // Show loader
                 self.activityIndicator.startAnimating()
-                spb.isPaused = true
+                if self.feedcontant?.type != .feed {
+                    spb.isPaused = true
+                }
+                
                 print("buffer")
             case "playbackLikelyToKeepUp"? :
-                spb.isPaused = false
+               
+                if self.feedcontant?.type != .feed {
+                     spb.isPaused = false
+                }
                 self.activityIndicator.stopAnimating()
                 // Hide loader
                 print("playing")
             case "playbackBufferFull"? :
-                spb.isPaused = false
+                
+                if self.feedcontant?.type != .feed {
+                    spb.isPaused = false
+                }
                 self.activityIndicator.stopAnimating()
                 // Hide loader
                 print("playing")
@@ -125,11 +155,19 @@ private extension ImageViewerController {
         tapGestureRecognizer.numberOfTapsRequired = 2
         tapGestureRecognizer.addTarget(self, action: #selector(imageViewDoubleTapped))
         imageView.addGestureRecognizer(tapGestureRecognizer)
-        
+    
         let panGestureRecognizer = UIPanGestureRecognizer()
         panGestureRecognizer.addTarget(self, action: #selector(imageViewPanned(_:)))
         panGestureRecognizer.delegate = self
         imageView.addGestureRecognizer(panGestureRecognizer)
+        
+        
+        let panGestureRecognizerbottomArea = UIPanGestureRecognizer()
+        panGestureRecognizerbottomArea.addTarget(self, action: #selector(imageViewPanned(_:)))
+        panGestureRecognizerbottomArea.delegate = self
+
+        bottomArea.addGestureRecognizer(panGestureRecognizerbottomArea)
+
     }
     
     func setupTransitions() {
@@ -150,16 +188,29 @@ private extension ImageViewerController {
         }
     }
     func stupeOwnerDetail()  {
-//        self.lblOwnerName.text = self.feedcontant?.owner.name!
-//        self.imgOwner.image = self.feedcontant?.owner.image
+        self.imgOwner.layer.cornerRadius = self.imgOwner.frame.size.width/2
+        self.imgOwner.clipsToBounds = true
+        
+        self.lblOwnerName.text = self.feedcontant?.owner.name!
+        if self.feedcontant?.owner.originalImage == "" {
+            self.imgOwner.image = self.feedcontant?.owner.image
+        } else {
+            self.imgOwner.kf.indicatorType = .activity
+            self.imgOwner.kf.indicator?.startAnimatingView()
+            self.imgOwner.kf.setImage(with: URL(string:(self.feedcontant?.owner.originalImage)! ))
+        }
+        
     }
     
     func setupFeedDetail()   {
       self.lblFeedTime.text =  self.feedcontant?.time
+        self.lblLike.text = "\(self.feedcontant!.lits!) Lits"
+        self.lblcmt.text = "\(self.feedcontant!.comments!) Comments"
+        self.lblDiscription.text = self.feedcontant?.discription!
     }
 
     func setupVideoPlayer()  {
-         item = AVPlayerItem(url: URL(string: "http://techslides.com/demos/sample-videos/small.mp4")!)
+        item = AVPlayerItem(url: URL(string: (self.feedcontant?.orignalMedia)!)!)
         let duration : CMTime = item!.asset.duration
         item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
         item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
@@ -167,6 +218,7 @@ private extension ImageViewerController {
         let seconds : Float64 = CMTimeGetSeconds(duration)
         let player = AVPlayer(playerItem: item)
         player.actionAtItemEnd = .none
+        if self.feedcontant?.type != .feed {
         spb = SegmentedProgressBar(numberOfSegments: 1, duration: seconds)
         spb.frame = CGRect(x: 15, y: 15, width: scrollView.frame.width - 30, height: 4)
         spb.delegate = self
@@ -175,7 +227,7 @@ private extension ImageViewerController {
         spb.padding = 2
         view.addSubview(spb)
         view.bringSubview(toFront: spb)
-        
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(ImageViewerController.playerItemDidReachEnd(notification:)), name: Notification.Name.AVPlayerItemDidPlayToEndTime, object: item)
        
         playerController = AVPlayerViewController()
@@ -196,19 +248,52 @@ private extension ImageViewerController {
 //        playerLayer!.use
 //        self.view.layer.insertSublayer(playerLayer!, at: 0)
         player.play()
-        self.spb.startAnimation()
+        if self.feedcontant?.type != .feed {
+            self.spb.startAnimation()
+            self.spb.isPaused = true
+        }
     }
-    
-    
+    func setupGradiant()  {
+        let gradient = CAGradientLayer()
+        gradient.frame = CGRect(origin: .zero, size: self.topArea.frame.size)
+        gradient.colors = [UIColor.black.withAlphaComponent(0.8).cgColor,UIColor.clear.cgColor]
+        topArea.layer.insertSublayer(gradient, at: 0)
+//        DispatchQueue.main.async {
+            let gradientbottm = CAGradientLayer()
+        gradientbottm.frame =  CGRect(origin: .zero, size: self.bottomGradiant.frame.size)
+
+            gradientbottm.colors = [UIColor.black.withAlphaComponent(0.8).cgColor,UIColor.clear.cgColor]
+            gradientbottm.startPoint = CGPoint(x: 0.0, y: 1.0)
+            gradientbottm.endPoint = CGPoint(x: 0.0, y: 0.0)
+            self.bottomGradiant.layer.insertSublayer(gradientbottm, at: 0)
+//        }
+        
+    }
+    func setupBottom()  {
+        if self.feedcontant?.type == .feed {
+            self.bottomArea.isHidden = false
+            self.activateStoryBottom.isHidden = true
+        }else if self.feedcontant?.type == .activateStory {
+            self.bottomArea.isHidden = true
+            self.activateStoryBottom.isHidden = false
+        } else {
+            self.bottomArea.isHidden = true
+            self.activateStoryBottom.isHidden = true
+        }
+    }
     func setupSegmentedProgressBar()  {
         
         if self.feedcontant?.mediaType != mediaType.image{
              self.activityIndicator.startAnimating()
+//            self.preParevideo(compilation: { (ready) in
+//                self.playVideo()
+//            })
             DispatchQueue.main.async {
                 self.setupVideoPlayer()
             }
             
         } else {
+            if self.feedcontant?.type != .feed {
             spb = SegmentedProgressBar(numberOfSegments: 1, duration: 3)
             spb.frame = CGRect(x: 15, y: 15, width: scrollView.frame.width - 30, height: 4)
             spb.delegate = self
@@ -216,10 +301,22 @@ private extension ImageViewerController {
             spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
             spb.padding = 2
             view.addSubview(spb)
-            self.spb.startAnimation()
+                
+                
+            }
+            activityIndicator.startAnimating()
+            imageView.kf.setImage(with: URL(string: (self.feedcontant?.orignalMedia)!), placeholder: configuration?.imageView?.image ?? configuration?.image, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
+                self.activityIndicator.stopAnimating()
+                if  self.spb != nil{
+                   self.spb.startAnimation()
+                }
+                
+            })
+            
         }
         
     }
+    
     @objc func playerItemDidReachEnd(notification: Notification) {
         //guard let playerItemq = notification.object as? AVPlayerItem else { return }
         //playerItem.seek(to: kCMTimeZero)

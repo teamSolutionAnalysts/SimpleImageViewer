@@ -40,18 +40,36 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! ImageCell
+        let feedOwner = owner.init(name: "Dhaval", image: cell.imageView.image!, originalImage: "")
+      
         let  feed = feedContant{ feeds in
             if indexPath.row == 0{
+                feeds.owner = feedOwner
+                feeds.type = .feed
                 feeds.mediaType = mediaType.image
+                feeds.orignalMedia = "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg"
+                feeds.time = "100 years ago"
+                feeds.lits = "50"
+                feeds.comments = "100"
+                feeds.discription = "Awesome Image"
+                feeds.feedId = ""
             } else {
+                feeds.feedId = ""
+                feeds.owner = feedOwner
+                feeds.type = .activateStory
                 feeds.mediaType = mediaType.video
+                feeds.orignalMedia = "http://techslides.com/demos/sample-videos/small.mp4"
+                feeds.time = "100 years ago"
+                feeds.lits = "500"
+                feeds.comments = "100"
+                feeds.discription = "Awesome Video"
             }
             
         }
         
         let configuration = ImageViewerConfiguration { config in
            config.imageView = cell.imageView
-            
+            config.actiondelegate = self
            
         }
         
@@ -101,4 +119,15 @@ private extension UIViewContentMode {
             return "bottomRight"
         }
     }
+}
+extension ViewController:ActionDelegate{
+    func shouldMakeIt(active: Bool, feedId: String) {
+        
+    }
+    
+    func actionTrigered(action: actionType, feedId: String) {
+        print(action,feedId)
+    }
+    
+   
 }
