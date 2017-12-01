@@ -253,6 +253,44 @@ private extension ImageViewerController {
             self.spb.isPaused = true
         }
     }
+    func preParevideo(compilation: @escaping videoHandler)  {
+//        DispatchQueue.main.async {
+    
+        self.item = AVPlayerItem(url: URL(string: (self.feedcontant?.orignalMedia)!)!)
+        
+        self.item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
+        self.item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
+        self.item?.addObserver(self, forKeyPath: "playbackBufferFull", options: .new, context: nil)
+        
+            let duration : CMTime = self.item!.asset.duration
+            let seconds : Float64 = CMTimeGetSeconds(duration)
+             compilation(seconds)
+        
+        
+       
+//        }
+    }
+    func playVideo(){
+        let player = AVPlayer(playerItem: item)
+        player.actionAtItemEnd = .none
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(ImageViewerController.playerItemDidReachEnd(notification:)), name: Notification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+        
+        playerController = AVPlayerViewController()
+        playerController?.view.contentMode = UIViewContentMode.scaleAspectFill
+        playerController?.view.isUserInteractionEnabled = false
+        playerController?.showsPlaybackControls = false
+        
+        playerController?.player = player
+        playerController?.view.frame = scrollView.frame
+        self.addChildViewController(playerController!)
+        self.imageView.addSubview((playerController?.view)!)
+        player.play()
+        if self.feedcontant?.type != .feed {
+            self.spb.startAnimation()
+            self.spb.isPaused = true
+        }
+    }
     func setupGradiant()  {
         let gradient = CAGradientLayer()
         gradient.frame = CGRect(origin: .zero, size: self.topArea.frame.size)
@@ -285,12 +323,33 @@ private extension ImageViewerController {
         
         if self.feedcontant?.mediaType != mediaType.image{
              self.activityIndicator.startAnimating()
-//            self.preParevideo(compilation: { (ready) in
-//                self.playVideo()
-//            })
-            DispatchQueue.main.async {
-                self.setupVideoPlayer()
+            DispatchQueue.global(qos: .background).async {
+                self.preParevideo(compilation: { (ready) in
+                  
+                    
+                    DispatchQueue.main.async {
+                        if self.feedcontant?.type != .feed {
+                            self.spb = SegmentedProgressBar(numberOfSegments: 1, duration: ready)
+                            self.spb.frame = CGRect(x: 15, y: 15, width: self.scrollView.frame.width - 30, height: 4)
+                            self.spb.delegate = self
+                            self.spb.topColor = UIColor.white
+                            self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
+                            self.spb.padding = 2
+                            self.view.addSubview(self.spb)
+                            self.view.bringSubview(toFront: self.spb)
+                        }
+                        self.playVideo()
+                        print("This is run on the main queue, after the previous code in outer block")
+                    }
+                })
+                print("This is run on the background queue")
+                
+                
             }
+            
+            
+            
+           
             
         } else {
             if self.feedcontant?.type != .feed {

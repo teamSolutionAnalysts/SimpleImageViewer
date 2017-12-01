@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 public typealias ImageCompletion = (UIImage?) -> Void
-public typealias videoHandler = (Bool) -> Void
+public typealias videoHandler = (Float64) -> Void
 public typealias ImageBlock = (@escaping ImageCompletion) -> Void
 public enum mediaType : Int{
     case image = 0
@@ -17,7 +17,7 @@ public class owner {
     var name:String!
     var image:UIImage!
     var originalImage: String!
-   public init(name:String,image:UIImage,originalImage:String) {
+    public init(name:String,image:UIImage,originalImage:String) {
         self.name = name
         self.image = image
         self.originalImage = originalImage
@@ -35,21 +35,66 @@ public enum actionType:Int{
 }
 public final class feedContant {
     
- public typealias feedContantClosure = (feedContant) -> ()
-  public  var thumb:String!
-  public  var orignalMedia:String!
+    public typealias feedContantClosure = (feedContant) -> ()
+    
+    public  var feedList:[feed]!
+    
+    public  var thumb:String!
+    public  var orignalMedia:String!
     public var feedId:String!
     public var time:String!
-     public var discription:String!
-     public var lits:String!
-     public var comments:String!
-  public var mediaType:mediaType!
-  public  var owner:owner!
-public var type:bottomType = .none
+    public var discription:String!
+    public var lits:String!
+    public var comments:String!
+    public var mediaType:mediaType!
+    public  var owner:owner!
+    public var type:bottomType = .none
     
     public init(feedClosure: feedContantClosure) {
         feedClosure(self)
     }
+    
+}
+public class feed {
+    public var thumb:String!
+    public var orignalMedia:String!
+    public var feedId:String!
+    public var time:String!
+    public var discription:String!
+    public var lits:String!
+    public var comments:String!
+    public var mediaType:mediaType!
+    public var owner:owner!
+    public var type:bottomType = .none
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType){
+        
+        self.thumb = thumb
+        self.orignalMedia = orignalMedia
+        self.feedId = feedId
+        self.time = time
+        self.discription = discription
+        self.lits = lits
+        self.comments = comments
+        self.mediaType = mediaType
+        self.owner = owner
+        self.type = type
+        
+        
+    }
+    
     
 }
 public final class ImageViewerConfiguration {

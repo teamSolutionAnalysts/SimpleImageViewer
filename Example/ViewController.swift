@@ -42,27 +42,29 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         let cell = collectionView.cellForItem(at: indexPath) as! ImageCell
         let feedOwner = owner.init(name: "Dhaval", image: cell.imageView.image!, originalImage: "")
       
-        let  feed = feedContant{ feeds in
+        let  feedq = feedContant{ feeds in
             if indexPath.row == 0{
-                feeds.owner = feedOwner
-                feeds.type = .feed
-                feeds.mediaType = mediaType.image
-                feeds.orignalMedia = "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg"
-                feeds.time = "100 years ago"
-                feeds.lits = "50"
-                feeds.comments = "100"
-                feeds.discription = "Awesome Image"
-                feeds.feedId = ""
+              let feed1 = feed.init(thumb: "", orignalMedia: "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg", feedId: "", time: "100 years ago", discription: "Awesome Image", lits: "50", comments: "100", mediaType: .image, owner: feedOwner, type: .feed)
+                feeds.feedList = [feed1]
+//                feeds.owner = feedOwner
+//                feeds.type = .feed
+//                feeds.mediaType = mediaType.image
+//                feeds.orignalMedia = "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg"
+//                feeds.time = "100 years ago"
+//                feeds.lits = "50"
+//                feeds.comments = "100"
+//                feeds.discription = "Awesome Image"
+//                feeds.feedId = ""
             } else {
-                feeds.feedId = ""
-                feeds.owner = feedOwner
-                feeds.type = .activateStory
-                feeds.mediaType = mediaType.video
-                feeds.orignalMedia = "http://techslides.com/demos/sample-videos/small.mp4"
-                feeds.time = "100 years ago"
-                feeds.lits = "500"
-                feeds.comments = "100"
-                feeds.discription = "Awesome Video"
+//                feeds.feedId = ""
+//                feeds.owner = feedOwner
+//                feeds.type = .activateStory
+//                feeds.mediaType = mediaType.video
+//                feeds.orignalMedia = "http://techslides.com/demos/sample-videos/small.mp4"
+//                feeds.time = "100 years ago"
+//                feeds.lits = "500"
+//                feeds.comments = "100"
+//                feeds.discription = "Awesome Video"
             }
             
         }
@@ -73,7 +75,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
            
         }
         
-        present(ImageViewerController(configuration: configuration, contant: feed), animated: true)
+        present(ImageViewerController(configuration: configuration, contant: feedq), animated: true)
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
