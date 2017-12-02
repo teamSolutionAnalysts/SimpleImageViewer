@@ -18,7 +18,7 @@ public final class ImageViewerController: UIViewController {
     fileprivate let feedcontant: feedContant?
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
-    
+    fileprivate let feedList:[feed]?
     @IBOutlet weak var bottomGradiant: UIView!
     @IBOutlet weak var lblDiscription: UILabel!
     @IBOutlet weak var lblcmt: UILabel!
@@ -32,51 +32,144 @@ public final class ImageViewerController: UIViewController {
     public init(configuration: ImageViewerConfiguration?,contant:feedContant?) {
         self.configuration = configuration
         self.feedcontant = contant
+        self.feedList = self.feedcontant?.feedList
         super.init(nibName: String(describing: type(of: self)), bundle: Bundle(for: type(of: self)))
         
         modalPresentationStyle = .overFullScreen
         modalTransitionStyle = .crossDissolve
         modalPresentationCapturesStatusBarAppearance = true
     }
-
+    
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        setupBottom()
-        stupeOwnerDetail()
-        setupFeedDetail()
-        imageView.image = configuration?.imageView?.image ?? configuration?.image
-        
+        //        setupBottomfor(userFeed: self.feedList![0])
+        //        stupeOwnerDetail(user: self.feedList![0].owner)
+        //        setupFeedDetail(userFeed: self.feedList![0])
+        //       // imageView.image = configuration?.imageView?.image ?? configuration?.image
         setupScrollView()
         setupGestureRecognizers()
         setupTransitions()
         setupActivityIndicator()
     }
-    @IBAction func btntestA(_ sender: UIButton) {
+    public override func viewWillAppear(_ animated: Bool) {
+        setupSegmentedProgressBarForFeed()
+        setupeOwnerDetail(user: (self.feedcontant?.owner)!)
+        setupBottom()
+        display(selectedFeed: self.feedList![0])
+        DispatchQueue.main.async {
+            self.setupGradiant()
+        }
         
-        if self.configuration?.actiondelegate != nil {
-            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: (self.feedcontant?.feedId)!)
-        }
-    }
-    @IBAction func swichAction(_ sender: UISwitch) {
-        print(sender.isOn)
-        if self.configuration?.actiondelegate != nil {
-            self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: (self.feedcontant?.feedId)!)
-        }
     }
     
-    deinit {
-        
-        NotificationCenter.default.removeObserver(self)
-    }
-    public override func viewWillAppear(_ animated: Bool) {
-        setupSegmentedProgressBar()
-        DispatchQueue.main.async {
-           self.setupGradiant()
+    func setupSegmentedProgressBarForFeed()  {
+        if self.feedcontant?.feedType  == .story {
+            self.spb = SegmentedProgressBar(numberOfSegments: self.feedList!.count, durations: (self.feedList?.map({$0.duration}))!)
+            self.spb.frame = CGRect(x: 15, y: 15, width: self.scrollView.frame.width - 30, height: 4)
+            self.spb.delegate = self
+            self.spb.topColor = UIColor.white
+            self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
+            self.spb.padding = 2
+            self.view.addSubview(self.spb)
+            self.view.bringSubview(toFront: self.spb)
+            self.spb.startAnimation()
+            self.spb.isPaused = true
         }
+        
+    }
+    func setupBottom()  {
+        if self.feedcontant?.bottomtype == .feed {
+            self.bottomArea.isHidden = false
+            self.activateStoryBottom.isHidden = true
+        }else if self.feedcontant?.bottomtype == .activateStory {
+            self.bottomArea.isHidden = true
+            self.activateStoryBottom.isHidden = false
+        } else {
+            self.bottomArea.isHidden = true
+            self.activateStoryBottom.isHidden = true
+        }
+    }
+    func setupeOwnerDetail(user:owner)  {
+        self.imgOwner.layer.cornerRadius = self.imgOwner.frame.size.width/2
+        self.imgOwner.clipsToBounds = true
+        
+        self.lblOwnerName.text = user.name!
+        if user.originalImage == "" {
+            self.imgOwner.image = user.image
+        } else {
+            self.imgOwner.kf.indicatorType = .activity
+            self.imgOwner.kf.indicator?.startAnimatingView()
+            self.imgOwner.kf.setImage(with: URL(string:(user.originalImage)! ))
+        }
+        
+    }
+    func display(selectedFeed:feed)  {
+        if selectedFeed.mediaType == .image{
+            activityIndicator.startAnimating()
+            imageView.kf.setImage(with: URL(string: (selectedFeed.orignalMedia)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
+                self.activityIndicator.stopAnimating()
+                if  self.spb != nil{
+                    self.spb.isPaused = false
+                }
+            })
+        } else {
+            activityIndicator.startAnimating()
+            if  self.spb != nil{
+                self.spb.isPaused = true
+            }
+           // DispatchQueue.global(qos: .background).async {
+                self.preParevideofor(userFeed: selectedFeed, compilation: { (ready) in
+                    //DispatchQueue.main.async {
+                        self.playVideo()
+                  //  }
+                    
+                })
+                
+           // }
+            
+        }
+        setupFeedDetail(userFeed: selectedFeed)
+}
+    func setupFeedDetail(userFeed:feed)   {
+        self.lblFeedTime.text =  userFeed.time
+        self.lblLike.text = "\(userFeed.lits!) Lits"
+        self.lblcmt.text = "\(userFeed.comments!) Comments"
+        self.lblDiscription.text = userFeed.discription!
+    }
+    func preParevideofor(userFeed:feed, compilation: @escaping videoHandler)  {
+        
+        self.item = AVPlayerItem(url: URL(string: (userFeed.orignalMedia)!)!)
+        
+        self.item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
+        self.item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
+        self.item?.addObserver(self, forKeyPath: "playbackBufferFull", options: .new, context: nil)
+        compilation(true)
+    }
+    func playVideo(){
+        let player = AVPlayer(playerItem: item)
+        player.actionAtItemEnd = .none
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(ImageViewerController.playerItemDidReachEnd(notification:)), name: Notification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+        
+        playerController = AVPlayerViewController()
+        playerController?.view.contentMode = UIViewContentMode.scaleAspectFill
+        playerController?.view.isUserInteractionEnabled = false
+        playerController?.showsPlaybackControls = false
+        
+        playerController?.player = player
+        playerController?.view.frame = scrollView.frame
+        self.addChildViewController(playerController!)
+        self.imageView.addSubview((playerController?.view)!)
+//        if  self.spb != nil{
+//            self.spb.isPaused = true
+//        }
+//        DispatchQueue.main.async {
+            player.play()
+//        }
         
     }
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -85,27 +178,27 @@ public final class ImageViewerController: UIViewController {
             case "playbackBufferEmpty"?:
                 // Show loader
                 self.activityIndicator.startAnimating()
-                if self.feedcontant?.type != .feed {
+                if self.spb != nil {
                     spb.isPaused = true
                 }
                 
-                print("buffer")
+                print("playbackBufferEmpty")
             case "playbackLikelyToKeepUp"? :
-               
-                if self.feedcontant?.type != .feed {
-                     spb.isPaused = false
-                }
-                self.activityIndicator.stopAnimating()
-                // Hide loader
-                print("playing")
-            case "playbackBufferFull"? :
                 
-                if self.feedcontant?.type != .feed {
+                if self.spb != nil {
                     spb.isPaused = false
                 }
                 self.activityIndicator.stopAnimating()
                 // Hide loader
-                print("playing")
+                print("playbackLikelyToKeepUp")
+            case "playbackBufferFull"? :
+                
+                if self.spb != nil {
+                    spb.isPaused = false
+                }
+                self.activityIndicator.stopAnimating()
+                // Hide loader
+                print("playbackBufferFull")
             case .none:
                 break
             case .some(_):
@@ -119,7 +212,24 @@ public final class ImageViewerController: UIViewController {
             item?.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp")
             item?.removeObserver(self, forKeyPath: "playbackBufferFull")
         }
-         self.dismiss(animated: true)
+        self.dismiss(animated: true)
+    }
+    @IBAction func btntestA(_ sender: UIButton) {
+        
+        if self.configuration?.actiondelegate != nil {
+            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: "")
+        }
+    }
+    @IBAction func swichAction(_ sender: UISwitch) {
+        print(sender.isOn)
+        if self.configuration?.actiondelegate != nil {
+            self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: "")
+        }
+    }
+    
+    deinit {
+        
+        NotificationCenter.default.removeObserver(self)
     }
 }
 
@@ -155,7 +265,7 @@ private extension ImageViewerController {
         tapGestureRecognizer.numberOfTapsRequired = 2
         tapGestureRecognizer.addTarget(self, action: #selector(imageViewDoubleTapped))
         imageView.addGestureRecognizer(tapGestureRecognizer)
-    
+        
         let panGestureRecognizer = UIPanGestureRecognizer()
         panGestureRecognizer.addTarget(self, action: #selector(imageViewPanned(_:)))
         panGestureRecognizer.delegate = self
@@ -165,9 +275,9 @@ private extension ImageViewerController {
         let panGestureRecognizerbottomArea = UIPanGestureRecognizer()
         panGestureRecognizerbottomArea.addTarget(self, action: #selector(imageViewPanned(_:)))
         panGestureRecognizerbottomArea.delegate = self
-
+        
         bottomArea.addGestureRecognizer(panGestureRecognizerbottomArea)
-
+        
     }
     
     func setupTransitions() {
@@ -187,194 +297,127 @@ private extension ImageViewerController {
             }
         }
     }
-    func stupeOwnerDetail()  {
-        self.imgOwner.layer.cornerRadius = self.imgOwner.frame.size.width/2
-        self.imgOwner.clipsToBounds = true
-        
-        self.lblOwnerName.text = self.feedcontant?.owner.name!
-        if self.feedcontant?.owner.originalImage == "" {
-            self.imgOwner.image = self.feedcontant?.owner.image
-        } else {
-            self.imgOwner.kf.indicatorType = .activity
-            self.imgOwner.kf.indicator?.startAnimatingView()
-            self.imgOwner.kf.setImage(with: URL(string:(self.feedcontant?.owner.originalImage)! ))
-        }
-        
-    }
     
-    func setupFeedDetail()   {
-      self.lblFeedTime.text =  self.feedcontant?.time
-        self.lblLike.text = "\(self.feedcontant!.lits!) Lits"
-        self.lblcmt.text = "\(self.feedcontant!.comments!) Comments"
-        self.lblDiscription.text = self.feedcontant?.discription!
-    }
-
-    func setupVideoPlayer()  {
-        item = AVPlayerItem(url: URL(string: (self.feedcontant?.orignalMedia)!)!)
-        let duration : CMTime = item!.asset.duration
-        item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
-        item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
-        item?.addObserver(self, forKeyPath: "playbackBufferFull", options: .new, context: nil)
-        let seconds : Float64 = CMTimeGetSeconds(duration)
-        let player = AVPlayer(playerItem: item)
-        player.actionAtItemEnd = .none
-        if self.feedcontant?.type != .feed {
-        spb = SegmentedProgressBar(numberOfSegments: 1, duration: seconds)
-        spb.frame = CGRect(x: 15, y: 15, width: scrollView.frame.width - 30, height: 4)
-        spb.delegate = self
-        spb.topColor = UIColor.white
-        spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
-        spb.padding = 2
-        view.addSubview(spb)
-        view.bringSubview(toFront: spb)
-        }
-        NotificationCenter.default.addObserver(self, selector: #selector(ImageViewerController.playerItemDidReachEnd(notification:)), name: Notification.Name.AVPlayerItemDidPlayToEndTime, object: item)
-       
-        playerController = AVPlayerViewController()
-        playerController?.view.contentMode = UIViewContentMode.scaleAspectFill
-       playerController?.view.isUserInteractionEnabled = false
-        playerController?.showsPlaybackControls = false
-        
-        playerController?.player = player
-        playerController?.view.frame = scrollView.frame
-        self.addChildViewController(playerController!)
-        self.imageView.addSubview((playerController?.view)!)
-        //self.view.sendSubview(toBack: (playerController?.view)!)
-
-        
-//        playerLayer = AVPlayerLayer(player: player)
-//        playerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill //AVLayerVideoGravity.resizeAspectFill
-//        playerLayer?.frame = self.view.frame
-//        playerLayer!.use
-//        self.view.layer.insertSublayer(playerLayer!, at: 0)
-        player.play()
-        if self.feedcontant?.type != .feed {
-            self.spb.startAnimation()
-            self.spb.isPaused = true
-        }
-    }
-    func preParevideo(compilation: @escaping videoHandler)  {
-//        DispatchQueue.main.async {
     
-        self.item = AVPlayerItem(url: URL(string: (self.feedcontant?.orignalMedia)!)!)
-        
-        self.item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
-        self.item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
-        self.item?.addObserver(self, forKeyPath: "playbackBufferFull", options: .new, context: nil)
-        
-            let duration : CMTime = self.item!.asset.duration
-            let seconds : Float64 = CMTimeGetSeconds(duration)
-             compilation(seconds)
-        
-        
-       
+    
+    
+//    func setupVideoPlayerfor(userFeed:feed)  {
+//        item = AVPlayerItem(url: URL(string: (userFeed.orignalMedia)!)!)
+//        let duration : CMTime = item!.asset.duration
+//        item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
+//        item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
+//        item?.addObserver(self, forKeyPath: "playbackBufferFull", options: .new, context: nil)
+//        let seconds : Float64 = CMTimeGetSeconds(duration)
+//        let player = AVPlayer(playerItem: item)
+//        player.actionAtItemEnd = .none
+//        if userFeed.type != .feed {
+//            spb = SegmentedProgressBar(numberOfSegments: 1, duration: seconds)
+//            spb.frame = CGRect(x: 15, y: 15, width: scrollView.frame.width - 30, height: 4)
+//            spb.delegate = self
+//            spb.topColor = UIColor.white
+//            spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
+//            spb.padding = 2
+//            view.addSubview(spb)
+//            view.bringSubview(toFront: spb)
 //        }
-    }
-    func playVideo(){
-        let player = AVPlayer(playerItem: item)
-        player.actionAtItemEnd = .none
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(ImageViewerController.playerItemDidReachEnd(notification:)), name: Notification.Name.AVPlayerItemDidPlayToEndTime, object: item)
-        
-        playerController = AVPlayerViewController()
-        playerController?.view.contentMode = UIViewContentMode.scaleAspectFill
-        playerController?.view.isUserInteractionEnabled = false
-        playerController?.showsPlaybackControls = false
-        
-        playerController?.player = player
-        playerController?.view.frame = scrollView.frame
-        self.addChildViewController(playerController!)
-        self.imageView.addSubview((playerController?.view)!)
-        player.play()
-        if self.feedcontant?.type != .feed {
-            self.spb.startAnimation()
-            self.spb.isPaused = true
-        }
-    }
+//        NotificationCenter.default.addObserver(self, selector: #selector(ImageViewerController.playerItemDidReachEnd(notification:)), name: Notification.Name.AVPlayerItemDidPlayToEndTime, object: item)
+//
+//        playerController = AVPlayerViewController()
+//        playerController?.view.contentMode = UIViewContentMode.scaleAspectFill
+//        playerController?.view.isUserInteractionEnabled = false
+//        playerController?.showsPlaybackControls = false
+//
+//        playerController?.player = player
+//        playerController?.view.frame = scrollView.frame
+//        self.addChildViewController(playerController!)
+//        self.imageView.addSubview((playerController?.view)!)
+//        //self.view.sendSubview(toBack: (playerController?.view)!)
+//
+//
+//        //        playerLayer = AVPlayerLayer(player: player)
+//        //        playerLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill //AVLayerVideoGravity.resizeAspectFill
+//        //        playerLayer?.frame = self.view.frame
+//        //        playerLayer!.use
+//        //        self.view.layer.insertSublayer(playerLayer!, at: 0)
+//        player.play()
+//        if userFeed.type != .feed {
+//            self.spb.startAnimation()
+//            self.spb.isPaused = true
+//        }
+//    }
+    
     func setupGradiant()  {
         let gradient = CAGradientLayer()
         gradient.frame = CGRect(origin: .zero, size: self.topArea.frame.size)
         gradient.colors = [UIColor.black.withAlphaComponent(0.8).cgColor,UIColor.clear.cgColor]
         topArea.layer.insertSublayer(gradient, at: 0)
-//        DispatchQueue.main.async {
-            let gradientbottm = CAGradientLayer()
+        let gradientbottm = CAGradientLayer()
         gradientbottm.frame =  CGRect(origin: .zero, size: self.bottomGradiant.frame.size)
+        
+        gradientbottm.colors = [UIColor.black.withAlphaComponent(0.8).cgColor,UIColor.clear.cgColor]
+        gradientbottm.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientbottm.endPoint = CGPoint(x: 0.0, y: 0.0)
+        self.bottomGradiant.layer.insertSublayer(gradientbottm, at: 0)
+    }
 
-            gradientbottm.colors = [UIColor.black.withAlphaComponent(0.8).cgColor,UIColor.clear.cgColor]
-            gradientbottm.startPoint = CGPoint(x: 0.0, y: 1.0)
-            gradientbottm.endPoint = CGPoint(x: 0.0, y: 0.0)
-            self.bottomGradiant.layer.insertSublayer(gradientbottm, at: 0)
+//    func setupSegmentedProgressBar()  {
+//
+//
+//        if self.feedcontant?.mediaType != mediaType.image{
+//            self.activityIndicator.startAnimating()
+//            DispatchQueue.global(qos: .background).async {
+//
+//                self.preParevideofor(userFeed: self.feedList![0], compilation: { (ready) in
+//
+//
+//                    DispatchQueue.main.async {
+//                        if self.feedcontant?.type != .feed {
+//                            self.spb = SegmentedProgressBar(numberOfSegments: 1, duration: ready)
+//                            self.spb.frame = CGRect(x: 15, y: 15, width: self.scrollView.frame.width - 30, height: 4)
+//                            self.spb.delegate = self
+//                            self.spb.topColor = UIColor.white
+//                            self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
+//                            self.spb.padding = 2
+//                            self.view.addSubview(self.spb)
+//                            self.view.bringSubview(toFront: self.spb)
+//                        }
+//                        self.playVideo()
+//                        print("This is run on the main queue, after the previous code in outer block")
+//                    }
+//                })
+//                print("This is run on the background queue")
+//
+//
+//            }
+//
+//
+//
+//
+//
+//        } else {
+//            if self.feedcontant?.type != .feed {
+//                spb = SegmentedProgressBar(numberOfSegments: 1, duration: 3)
+//                spb.frame = CGRect(x: 15, y: 15, width: scrollView.frame.width - 30, height: 4)
+//                spb.delegate = self
+//                spb.topColor = UIColor.white
+//                spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
+//                spb.padding = 2
+//                view.addSubview(spb)
+//
+//
+//            }
+//            activityIndicator.startAnimating()
+//            imageView.kf.setImage(with: URL(string: (self.feedcontant?.orignalMedia)!), placeholder: configuration?.imageView?.image ?? configuration?.image, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
+//                self.activityIndicator.stopAnimating()
+//                if  self.spb != nil{
+//                    self.spb.startAnimation()
+//                }
+//
+//            })
+//
 //        }
-        
-    }
-    func setupBottom()  {
-        if self.feedcontant?.type == .feed {
-            self.bottomArea.isHidden = false
-            self.activateStoryBottom.isHidden = true
-        }else if self.feedcontant?.type == .activateStory {
-            self.bottomArea.isHidden = true
-            self.activateStoryBottom.isHidden = false
-        } else {
-            self.bottomArea.isHidden = true
-            self.activateStoryBottom.isHidden = true
-        }
-    }
-    func setupSegmentedProgressBar()  {
-        
-        if self.feedcontant?.mediaType != mediaType.image{
-             self.activityIndicator.startAnimating()
-            DispatchQueue.global(qos: .background).async {
-                self.preParevideo(compilation: { (ready) in
-                  
-                    
-                    DispatchQueue.main.async {
-                        if self.feedcontant?.type != .feed {
-                            self.spb = SegmentedProgressBar(numberOfSegments: 1, duration: ready)
-                            self.spb.frame = CGRect(x: 15, y: 15, width: self.scrollView.frame.width - 30, height: 4)
-                            self.spb.delegate = self
-                            self.spb.topColor = UIColor.white
-                            self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
-                            self.spb.padding = 2
-                            self.view.addSubview(self.spb)
-                            self.view.bringSubview(toFront: self.spb)
-                        }
-                        self.playVideo()
-                        print("This is run on the main queue, after the previous code in outer block")
-                    }
-                })
-                print("This is run on the background queue")
-                
-                
-            }
-            
-            
-            
-           
-            
-        } else {
-            if self.feedcontant?.type != .feed {
-            spb = SegmentedProgressBar(numberOfSegments: 1, duration: 3)
-            spb.frame = CGRect(x: 15, y: 15, width: scrollView.frame.width - 30, height: 4)
-            spb.delegate = self
-            spb.topColor = UIColor.white
-            spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
-            spb.padding = 2
-            view.addSubview(spb)
-                
-                
-            }
-            activityIndicator.startAnimating()
-            imageView.kf.setImage(with: URL(string: (self.feedcontant?.orignalMedia)!), placeholder: configuration?.imageView?.image ?? configuration?.image, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
-                self.activityIndicator.stopAnimating()
-                if  self.spb != nil{
-                   self.spb.startAnimation()
-                }
-                
-            })
-            
-        }
-        
-    }
+//
+//    }
     
     @objc func playerItemDidReachEnd(notification: Notification) {
         //guard let playerItemq = notification.object as? AVPlayerItem else { return }
@@ -396,14 +439,14 @@ private extension ImageViewerController {
     
     @objc func imageViewPanned(_ recognizer: UIPanGestureRecognizer) {
         guard transitionHandler != nil else { return }
-            
+        
         let translation = recognizer.translation(in: imageView)
         let velocity = recognizer.velocity(in: imageView)
         
         switch recognizer.state {
         case .began:
             transitionHandler?.dismissInteractively = true
-           dismissAll()
+            dismissAll()
         case .changed:
             let percentage = abs(translation.y) / imageView.bounds.height
             transitionHandler?.dismissalInteractor.update(percentage: percentage)
@@ -421,22 +464,56 @@ private extension ImageViewerController {
     }
 }
 extension ImageViewerController:SegmentedProgressBarDelegate{
-
+    
     
     func segmentedProgressBarChangedIndex(index: Int) {
+        
+
         print("Now showing index: \(index)")
-        updateImage(index: index)
+        
+       
+        
+//
+        changeSetup { (ready) in
+
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                self.updateImage(index: index)
+            })
+
+        }
+//
+        
+       
     }
-    
+    func changeSetup(complition:@escaping videoHandler)  {
+        DispatchQueue.main.async {
+            if  self.spb != nil{
+                
+                self.spb.isPaused = true
+                
+            }
+ }
+       complition(true)
+    }
     func segmentedProgressBarFinished() {
-//       playerController?.view.removeFromSuperview()
-//        DispatchQueue.main.async {
-//            self.dismiss(animated: true)
-//        }
-dismissAll()
+        //       playerController?.view.removeFromSuperview()
+        //
+        //            self.dismiss(animated: true)
+        //        }
+        dismissAll()
         print("Finished!")
     }
     private func updateImage(index: Int) {
-       // iv.image = images[index]
+        
+        
+        self.playerController?.view.removeFromSuperview()
+        self.playerController?.removeFromParentViewController()
+        self.item = nil
+        self.playerController = nil
+        display(selectedFeed: (self.feedList?[index])!)
     }
 }
+
+
+

@@ -1,6 +1,7 @@
 import UIKit
 import SimpleImageViewer
-
+import AVFoundation
+import AVKit
 class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     fileprivate let contentModes: [UIViewContentMode] = [.scaleToFill,
                                                          .scaleAspectFit,
@@ -44,8 +45,17 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
       
         let  feedq = feedContant{ feeds in
             if indexPath.row == 0{
-              let feed1 = feed.init(thumb: "", orignalMedia: "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg", feedId: "", time: "100 years ago", discription: "Awesome Image", lits: "50", comments: "100", mediaType: .image, owner: feedOwner, type: .feed)
-                feeds.feedList = [feed1]
+              let feed1 = feed.init(thumb: "", orignalMedia: "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg", feedId: "", time: "100 years ago", discription: "Awesome Image", lits: "50", comments: "100", mediaType: .image, owner: feedOwner, type: .feed,duration: 5)
+                let feed2 = feed.init(thumb: "", orignalMedia: "http://techslides.com/demos/sample-videos/small.mp4", feedId: "", time: "100 years ago", discription: "Awesome Video", lits: "50", comments: "100", mediaType: .video, owner: feedOwner, type: .feed,duration: 7)
+//              let  item = AVPlayerItem(url: URL(string: "http://techslides.com/demos/sample-videos/small.mp4")!)
+//                let duration : CMTime = item.asset.duration
+//let seconds : Float64 = CMTimeGetSeconds(duration)
+                
+                //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4
+                feeds.feedList = [feed1,feed1,feed2,feed1,feed2]
+                feeds.bottomtype = .feed
+                feeds.feedType = .story
+                feeds.owner = feedOwner
 //                feeds.owner = feedOwner
 //                feeds.type = .feed
 //                feeds.mediaType = mediaType.image
@@ -56,6 +66,7 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
 //                feeds.discription = "Awesome Image"
 //                feeds.feedId = ""
             } else {
+                
 //                feeds.feedId = ""
 //                feeds.owner = feedOwner
 //                feeds.type = .activateStory
