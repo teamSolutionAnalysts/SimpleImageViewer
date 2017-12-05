@@ -3,6 +3,7 @@ import AVFoundation
 import AVKit
 import Kingfisher
 public final class ImageViewerController: UIViewController {
+    var observerHandler = false
     @IBOutlet fileprivate var scrollView: UIScrollView!
     @IBOutlet fileprivate var imageView: UIImageView!
     @IBOutlet fileprivate var activityIndicator: UIActivityIndicatorView!
@@ -46,10 +47,7 @@ public final class ImageViewerController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        //        setupBottomfor(userFeed: self.feedList![0])
-        //        stupeOwnerDetail(user: self.feedList![0].owner)
-        //        setupFeedDetail(userFeed: self.feedList![0])
-        //       // imageView.image = configuration?.imageView?.image ?? configuration?.image
+        // imageView.image = configuration?.imageView?.image ?? configuration?.image
         setupScrollView()
         setupGestureRecognizers()
         setupTransitions()
@@ -69,7 +67,7 @@ public final class ImageViewerController: UIViewController {
     func setupSegmentedProgressBarForFeed()  {
         if self.feedcontant?.feedType  == .story {
             self.spb = SegmentedProgressBar(numberOfSegments: self.feedList!.count, durations: (self.feedList?.map({$0.duration}))!)
-            self.spb.frame = CGRect(x: 15, y: 15, width: self.scrollView.frame.width - 30, height: 4)
+            self.spb.frame = CGRect(x: 15, y: 30, width: self.scrollView.frame.width - 30, height: 4)
             self.spb.delegate = self
             self.spb.topColor = UIColor.white
             self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
@@ -79,7 +77,6 @@ public final class ImageViewerController: UIViewController {
             self.spb.startAnimation()
             self.spb.isPaused = true
         }
-        
     }
     func setupBottom()  {
         if self.feedcontant?.bottomtype == .feed {
@@ -96,7 +93,6 @@ public final class ImageViewerController: UIViewController {
     func setupeOwnerDetail(user:owner)  {
         self.imgOwner.layer.cornerRadius = self.imgOwner.frame.size.width/2
         self.imgOwner.clipsToBounds = true
-        
         self.lblOwnerName.text = user.name!
         if user.originalImage == "" {
             self.imgOwner.image = user.image
@@ -105,15 +101,17 @@ public final class ImageViewerController: UIViewController {
             self.imgOwner.kf.indicator?.startAnimatingView()
             self.imgOwner.kf.setImage(with: URL(string:(user.originalImage)! ))
         }
-        
     }
     func display(selectedFeed:feed)  {
         if selectedFeed.mediaType == .image{
+            imageView.isUserInteractionEnabled = true
             activityIndicator.startAnimating()
             imageView.kf.setImage(with: URL(string: (selectedFeed.orignalMedia)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
-                self.activityIndicator.stopAnimating()
-                if  self.spb != nil{
-                    self.spb.isPaused = false
+                if image != nil{
+                    self.activityIndicator.stopAnimating()
+                    if  self.spb != nil{
+                        self.spb.isPaused = false
+                    }
                 }
             })
         } else {
@@ -121,16 +119,10 @@ public final class ImageViewerController: UIViewController {
             if  self.spb != nil{
                 self.spb.isPaused = true
             }
-           // DispatchQueue.global(qos: .background).async {
                 self.preParevideofor(userFeed: selectedFeed, compilation: { (ready) in
-                    //DispatchQueue.main.async {
+                    self.imageView.isUserInteractionEnabled = true
                         self.playVideo()
-                  //  }
-                    
                 })
-                
-           // }
-            
         }
         setupFeedDetail(userFeed: selectedFeed)
 }
@@ -147,6 +139,7 @@ public final class ImageViewerController: UIViewController {
         self.item?.addObserver(self, forKeyPath: "playbackBufferEmpty", options: .new, context: nil)
         self.item?.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: .new, context: nil)
         self.item?.addObserver(self, forKeyPath: "playbackBufferFull", options: .new, context: nil)
+       observerHandler = true
         compilation(true)
     }
     func playVideo(){
@@ -207,7 +200,7 @@ public final class ImageViewerController: UIViewController {
         }
     }
     func dismissAll()  {
-        if item != nil {
+        if observerHandler {
             item?.removeObserver(self, forKeyPath: "playbackBufferEmpty")
             item?.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp")
             item?.removeObserver(self, forKeyPath: "playbackBufferFull")
@@ -261,10 +254,10 @@ private extension ImageViewerController {
     }
     
     func setupGestureRecognizers() {
-        let tapGestureRecognizer = UITapGestureRecognizer()
-        tapGestureRecognizer.numberOfTapsRequired = 2
-        tapGestureRecognizer.addTarget(self, action: #selector(imageViewDoubleTapped))
-        imageView.addGestureRecognizer(tapGestureRecognizer)
+//        let tapGestureRecognizer = UITapGestureRecognizer()
+//        tapGestureRecognizer.numberOfTapsRequired = 2
+//        tapGestureRecognizer.addTarget(self, action: #selector(imageViewDoubleTapped))
+//        imageView.addGestureRecognizer(tapGestureRecognizer)
         
         let panGestureRecognizer = UIPanGestureRecognizer()
         panGestureRecognizer.addTarget(self, action: #selector(imageViewPanned(_:)))
@@ -278,6 +271,7 @@ private extension ImageViewerController {
         
         bottomArea.addGestureRecognizer(panGestureRecognizerbottomArea)
         
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(imageViewtappedView(_:))))
     }
     
     func setupTransitions() {
@@ -436,7 +430,26 @@ private extension ImageViewerController {
             scrollView.setZoomScale(scrollView.maximumZoomScale, animated: true)
         }
     }
-    
+    @objc func imageViewtappedView(_ recognizer: UIPanGestureRecognizer) {
+        if recognizer.state == .recognized
+        {
+            let touchedPpoint = recognizer.location(in: imageView)
+            if touchedPpoint.x < self.imageView.frame.size.width/2 {
+                if self.spb != nil {
+                    imageView.isUserInteractionEnabled = false
+                    self.spb.rewind()
+                }
+                print("rewi")
+            } else if touchedPpoint.x > self.imageView.frame.size.width/2 {
+                if self.spb != nil {
+                    imageView.isUserInteractionEnabled = false
+                    self.spb.skip()
+                }
+                print("skip")
+            }
+            print(recognizer.location(in: imageView))
+        }
+    }
     @objc func imageViewPanned(_ recognizer: UIPanGestureRecognizer) {
         guard transitionHandler != nil else { return }
         
