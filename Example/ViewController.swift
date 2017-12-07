@@ -100,7 +100,6 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return CGSize(width: cellWidth, height: cellWidth)
     }
 }
-
 private extension UIViewContentMode {
     var name: String {
         switch self {

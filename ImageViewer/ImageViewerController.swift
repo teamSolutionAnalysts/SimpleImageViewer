@@ -53,7 +53,11 @@ public final class ImageViewerController: UIViewController {
         setupTransitions()
         setupActivityIndicator()
     }
+    public override func viewWillDisappear(_ animated: Bool) {
+        UIApplication.shared.isStatusBarHidden = false
+    }
     public override func viewWillAppear(_ animated: Bool) {
+        UIApplication.shared.isStatusBarHidden = true
         setupSegmentedProgressBarForFeed()
         setupeOwnerDetail(user: (self.feedcontant?.owner)!)
         setupBottom()
