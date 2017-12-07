@@ -4,14 +4,23 @@ import UIKit
 public typealias ImageCompletion = (UIImage?) -> Void
 public typealias videoHandler = (Bool) -> Void
 public typealias ImageBlock = (@escaping ImageCompletion) -> Void
+
+
+
 public enum mediaType : Int{
     case image = 0
     case video = 1
 }
+
+
+
+
 public enum bottomType : Int{
     case feed = 0
     case activateStory = 1
     case none = 2
+    case activateStoryWithEye = 3
+    
 }
 public class owner {
     var name:String!
@@ -36,6 +45,7 @@ public enum actionType:Int{
     case comment = 1
     case share = 2
     case more = 3
+    case viewerList = 4
 }
 public final class feedContant {
     

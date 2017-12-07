@@ -25,6 +25,7 @@
                 <outlet property="activityIndicator" destination="oPl-2f-Knx" id="GOD-eG-o96"/>
                 <outlet property="bottomArea" destination="GcT-xj-pVO" id="tX9-VN-KXJ"/>
                 <outlet property="bottomGradiant" destination="I4W-Za-eeq" id="9Lw-4X-yiL"/>
+                <outlet property="btnViews" destination="bY9-fb-2kF" id="dII-xk-NYg"/>
                 <outlet property="imageView" destination="rHA-5m-kkS" id="V86-k1-pPH"/>
                 <outlet property="imgOwner" destination="8i0-Od-tIr" id="3In-hG-PEZ"/>
                 <outlet property="lblDiscription" destination="cvE-BL-2lU" id="MKH-PV-5Eb"/>
@@ -158,7 +159,7 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rjN-0H-56r">
-                    <rect key="frame" x="87" y="597" width="199.5" height="40"/>
+                    <rect key="frame" x="74" y="597" width="227" height="40"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Activate this story" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L3e-Sv-NQ0">
                             <rect key="frame" x="0.0" y="0.0" width="137.5" height="40"/>
@@ -172,15 +173,23 @@
                                 <action selector="swichAction:" destination="-1" eventType="valueChanged" id="Cd7-1H-7Es"/>
                             </connections>
                         </switch>
+                        <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bY9-fb-2kF">
+                            <rect key="frame" x="202" y="0.0" width="25" height="40"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <state key="normal" image="activate-view"/>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstItem="bY9-fb-2kF" firstAttribute="top" secondItem="rjN-0H-56r" secondAttribute="top" id="8KU-JF-Oph"/>
+                        <constraint firstAttribute="bottom" secondItem="bY9-fb-2kF" secondAttribute="bottom" id="Ftf-oY-VTd"/>
+                        <constraint firstItem="bY9-fb-2kF" firstAttribute="leading" secondItem="8f6-ul-q8R" secondAttribute="trailing" constant="10.5" id="IBC-oD-yQM"/>
                         <constraint firstItem="8f6-ul-q8R" firstAttribute="top" secondItem="rjN-0H-56r" secondAttribute="top" constant="4" id="Tvn-Y1-mfS"/>
                         <constraint firstItem="L3e-Sv-NQ0" firstAttribute="top" secondItem="rjN-0H-56r" secondAttribute="top" id="bUt-hi-MZK"/>
                         <constraint firstItem="L3e-Sv-NQ0" firstAttribute="leading" secondItem="rjN-0H-56r" secondAttribute="leading" id="n7L-Dl-VnR"/>
                         <constraint firstItem="8f6-ul-q8R" firstAttribute="leading" secondItem="L3e-Sv-NQ0" secondAttribute="trailing" constant="5" id="nwy-6Q-9Gf"/>
-                        <constraint firstAttribute="trailing" secondItem="8f6-ul-q8R" secondAttribute="trailing" constant="8" id="oaZ-LS-TND"/>
                         <constraint firstAttribute="bottom" secondItem="8f6-ul-q8R" secondAttribute="bottom" constant="5" id="pah-jg-l25"/>
+                        <constraint firstAttribute="trailing" secondItem="bY9-fb-2kF" secondAttribute="trailing" id="tF9-RV-py8"/>
                         <constraint firstAttribute="bottom" secondItem="L3e-Sv-NQ0" secondAttribute="bottom" id="xv3-Uu-5Gi"/>
                     </constraints>
                 </view>
@@ -274,6 +283,7 @@
         </view>
     </objects>
     <resources>
+        <image name="activate-view" width="25" height="15"/>
         <image name="closeButton" width="13" height="13"/>
         <image name="img_Like" width="21" height="20"/>
         <image name="img_comment" width="23" height="20"/>

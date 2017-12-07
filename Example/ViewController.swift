@@ -52,8 +52,8 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
 //let seconds : Float64 = CMTimeGetSeconds(duration)
                 
                 //http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4
-                feeds.feedList = [feed1,feed1,feed1,feed1,feed1]
-                feeds.bottomtype = .feed
+                feeds.feedList = [feed1,feed2,feed1,feed1,feed1]
+                feeds.bottomtype = .activateStoryWithEye
                 feeds.feedType = .story
                 feeds.owner = feedOwner
 //                feeds.owner = feedOwner

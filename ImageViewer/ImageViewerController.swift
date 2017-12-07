@@ -19,6 +19,10 @@ public final class ImageViewerController: UIViewController {
     fileprivate let feedcontant: feedContant?
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
+   
+    
+    
+    @IBOutlet weak var btnViews: UIButton!
     fileprivate let feedList:[feed]?
     @IBOutlet weak var bottomGradiant: UIView!
     @IBOutlet weak var lblDiscription: UILabel!
@@ -89,6 +93,11 @@ public final class ImageViewerController: UIViewController {
         }else if self.feedcontant?.bottomtype == .activateStory {
             self.bottomArea.isHidden = true
             self.activateStoryBottom.isHidden = false
+            self.btnViews.isHidden = true
+        } else if self.feedcontant?.bottomtype == .activateStoryWithEye {
+            self.bottomArea.isHidden = true
+            self.activateStoryBottom.isHidden = false
+            self.btnViews.isHidden = false
         } else {
             self.bottomArea.isHidden = true
             self.activateStoryBottom.isHidden = true
