@@ -177,6 +177,9 @@
                             <rect key="frame" x="202" y="0.0" width="25" height="40"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <state key="normal" image="activate-view"/>
+                            <connections>
+                                <action selector="btntestA:" destination="-1" eventType="touchUpInside" id="Bcm-Zw-Gno"/>
+                            </connections>
                         </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

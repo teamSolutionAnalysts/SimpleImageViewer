@@ -19,7 +19,7 @@ public final class ImageViewerController: UIViewController {
     fileprivate let feedcontant: feedContant?
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
-   
+   fileprivate var shouldAppear = true
     
     
     @IBOutlet weak var btnViews: UIButton!
@@ -62,13 +62,17 @@ public final class ImageViewerController: UIViewController {
     }
     public override func viewWillAppear(_ animated: Bool) {
         UIApplication.shared.isStatusBarHidden = true
-        setupSegmentedProgressBarForFeed()
-        setupeOwnerDetail(user: (self.feedcontant?.owner)!)
-        setupBottom()
-        display(selectedFeed: self.feedList![0])
-        DispatchQueue.main.async {
-            self.setupGradiant()
+        if shouldAppear {
+            shouldAppear = false
+            setupSegmentedProgressBarForFeed()
+            setupeOwnerDetail(user: (self.feedcontant?.owner)!)
+            setupBottom()
+            display(selectedFeed: self.feedList![0])
+            DispatchQueue.main.async {
+                self.setupGradiant()
+            }
         }
+        
         
     }
     
@@ -472,7 +476,9 @@ private extension ImageViewerController {
         switch recognizer.state {
         case .began:
             transitionHandler?.dismissInteractively = true
-            dismissAll()
+            DispatchQueue.main.async {
+                self.dismissAll()
+            }
         case .changed:
             let percentage = abs(translation.y) / imageView.bounds.height
             transitionHandler?.dismissalInteractor.update(percentage: percentage)
