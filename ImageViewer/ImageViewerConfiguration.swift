@@ -33,7 +33,7 @@ public class owner {
     }
 }
 public protocol ActionDelegate {
-    func actionTrigered(action:actionType,feedId:String)
+    func actionTrigered(action:actionType,feedId:String,base:UIViewController)
     func shouldMakeIt(active:Bool,feedId:String)
 }
 public enum feedType:Int{

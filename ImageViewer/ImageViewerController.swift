@@ -227,7 +227,7 @@ public final class ImageViewerController: UIViewController {
     @IBAction func btntestA(_ sender: UIButton) {
         
         if self.configuration?.actiondelegate != nil {
-            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: "")
+           self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: "", base: self)
         }
     }
     @IBAction func swichAction(_ sender: UISwitch) {
