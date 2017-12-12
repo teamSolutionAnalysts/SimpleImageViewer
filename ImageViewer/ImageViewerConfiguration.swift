@@ -79,7 +79,7 @@ public class feed {
     
     public var viewers : String!
 
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval){
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:String){
         
         self.thumb = thumb
         self.orignalMedia = orignalMedia
@@ -90,7 +90,7 @@ public class feed {
         self.comments = comments
         self.mediaType = mediaType
         self.duration = duration
-        
+        self.viewers = viewers
     }
     
     
