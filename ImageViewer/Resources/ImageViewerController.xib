@@ -28,12 +28,14 @@
                 <outlet property="btnViews" destination="bY9-fb-2kF" id="dII-xk-NYg"/>
                 <outlet property="imageView" destination="rHA-5m-kkS" id="V86-k1-pPH"/>
                 <outlet property="imgOwner" destination="8i0-Od-tIr" id="3In-hG-PEZ"/>
+                <outlet property="lblActiveSory" destination="L3e-Sv-NQ0" id="aaW-KD-YSH"/>
                 <outlet property="lblDiscription" destination="cvE-BL-2lU" id="MKH-PV-5Eb"/>
                 <outlet property="lblFeedTime" destination="M7F-Us-GHo" id="JXx-js-UlI"/>
                 <outlet property="lblLike" destination="NeB-g1-dSf" id="Hcl-tn-Ipo"/>
                 <outlet property="lblOwnerName" destination="70j-a4-zUq" id="k8z-8w-PUd"/>
                 <outlet property="lblcmt" destination="t96-u4-w8M" id="Agl-iV-A6a"/>
                 <outlet property="scrollView" destination="cQD-2Q-pvo" id="M6k-QU-OVY"/>
+                <outlet property="switchWidth" destination="IOO-3j-yS7" id="Nue-6l-vSv"/>
                 <outlet property="topArea" destination="Guv-8M-wff" id="KTJ-aL-Ifa"/>
                 <outlet property="view" destination="iN0-l3-epB" id="bEt-1B-b5l"/>
             </connections>
@@ -169,6 +171,9 @@
                         </label>
                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="8f6-ul-q8R">
                             <rect key="frame" x="142.5" y="4" width="51" height="31"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="49" id="IOO-3j-yS7"/>
+                            </constraints>
                             <connections>
                                 <action selector="swichAction:" destination="-1" eventType="valueChanged" id="Cd7-1H-7Es"/>
                             </connections>

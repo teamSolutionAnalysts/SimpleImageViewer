@@ -22,7 +22,8 @@ public enum bottomType : Int{
     case feed = 0
     case activateStory = 1
     case none = 2
-    case activateStoryWithEye = 3
+    case eye = 3
+    case activateStoryWithEye = 4
     
 }
 public class owner {
@@ -76,7 +77,7 @@ public class feed {
     public var comments:String!
     public var mediaType:mediaType!
     
-    
+    public var viewers : String!
 
     public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval){
         
