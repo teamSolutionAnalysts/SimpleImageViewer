@@ -7,6 +7,9 @@ public typealias ImageBlock = (@escaping ImageCompletion) -> Void
 
 
 
+
+
+
 public enum mediaType : Int{
     case image = 0
     case video = 1
@@ -35,6 +38,7 @@ public class owner {
 public protocol ActionDelegate {
     func actionTrigered(action:actionType,feedId:String,base:UIViewController)
     func shouldMakeIt(active:Bool,feedId:String)
+    func markAsViewed(feedId:String)
 }
 public enum feedType:Int{
     case story = 0

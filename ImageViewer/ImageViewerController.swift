@@ -20,7 +20,7 @@ public final class ImageViewerController: UIViewController {
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
    fileprivate var shouldAppear = true
-    
+    fileprivate var viewed = false
     
     @IBOutlet weak var btnViews: UIButton!
     fileprivate let feedList:[feed]?
@@ -115,7 +115,6 @@ public final class ImageViewerController: UIViewController {
             self.imgOwner.image = user.image
         } else {
             self.imgOwner.kf.indicatorType = .activity
-            self.imgOwner.kf.indicator?.startAnimatingView()
             self.imgOwner.kf.setImage(with: URL(string:(user.originalImage)! ))
         }
     }
@@ -126,6 +125,13 @@ public final class ImageViewerController: UIViewController {
             imageView.kf.setImage(with: URL(string: (selectedFeed.orignalMedia)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
                 if image != nil{
                     self.activityIndicator.stopAnimating()
+                    if self.configuration?.actiondelegate != nil {
+                        if !self.viewed{
+                            self.viewed = true
+                            self.configuration?.actiondelegate?.markAsViewed(feedId: selectedFeed.feedId)
+                        }
+                        
+                    }
                     if  self.spb != nil{
                         self.spb.isPaused = false
                     }
@@ -138,6 +144,13 @@ public final class ImageViewerController: UIViewController {
             }
                 self.preParevideofor(userFeed: selectedFeed, compilation: { (ready) in
                     self.imageView.isUserInteractionEnabled = true
+//                    if self.configuration?.actiondelegate != nil {
+//                        if !self.viewed{
+//                            self.viewed = true
+//                            self.configuration?.actiondelegate?.markAsViewed(feedId: selectedFeed.feedId)
+//                        }
+//
+//                    }
                         self.playVideo()
                 })
         }
@@ -177,9 +190,9 @@ public final class ImageViewerController: UIViewController {
 //        if  self.spb != nil{
 //            self.spb.isPaused = true
 //        }
-//        DispatchQueue.main.async {
+        DispatchQueue.main.async {
             player.play()
-//        }
+        }
         
     }
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -507,7 +520,7 @@ extension ImageViewerController:SegmentedProgressBarDelegate{
         
 //
         changeSetup { (ready) in
-
+self.viewed = false
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
                 self.updateImage(index: index)
