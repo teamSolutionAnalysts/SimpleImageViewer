@@ -96,13 +96,11 @@ class SegmentedProgressBar: UIView {
        
         animate()
     }
-    
     private func animate(animationIndex: Int = 0) {
         let nextSegment = segments[animationIndex]
         currentAnimationIndex = animationIndex
         self.isPaused = false // no idea why we have to do this here, but it fixes everything :D
         UIView.animate(withDuration: durations[animationIndex], delay: 0.0, options: .curveLinear, animations: {
-            
             nextSegment.topSegmentView.frame.size.width = nextSegment.bottomSegmentView.frame.width
         }) { (finished) in
             if !finished {

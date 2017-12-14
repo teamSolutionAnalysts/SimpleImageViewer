@@ -77,9 +77,9 @@ public class feed {
     public var comments:String!
     public var mediaType:mediaType!
     
-    public var viewers : String!
+    public var viewers : Int!
 
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:String){
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int){
         
         self.thumb = thumb
         self.orignalMedia = orignalMedia
