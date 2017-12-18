@@ -22,7 +22,7 @@ public final class ImageViewerController: UIViewController {
     fileprivate var shouldAppear = true
     fileprivate var viewed = false
     fileprivate var currentIndex = 0
-   @IBOutlet weak var swichActive: UISwitch!
+    @IBOutlet weak var swichActive: UISwitch!
     @IBOutlet weak var lblActiveSory: UILabel!
     @IBOutlet weak var switchWidth: NSLayoutConstraint!
     @IBOutlet weak var btnViews: UIButton!
@@ -54,6 +54,8 @@ public final class ImageViewerController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(ImageViewerController.updateCounters(_:)), name: NSNotification.Name(rawValue: "updateCounters"), object: nil)
         // imageView.image = configuration?.imageView?.image ?? configuration?.image
         setupScrollView()
         setupGestureRecognizers()
@@ -96,7 +98,7 @@ public final class ImageViewerController: UIViewController {
     func setupSegmentedProgressBarForFeed()  {
         if self.feedcontant?.feedType  == .story {
             self.spb = SegmentedProgressBar(numberOfSegments: self.feedList!.count, durations: (self.feedList?.map({$0.duration}))!)
-            self.spb.frame = CGRect(x: 15, y: 30, width: self.scrollView.frame.width - 30, height: 4)
+            self.spb.frame = CGRect(x: 15, y: 30, width: UIScreen.main.bounds.size.width - 30, height: 3)
             self.spb.delegate = self
             self.spb.topColor = UIColor.white
             self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
@@ -190,6 +192,16 @@ public final class ImageViewerController: UIViewController {
             })
         }
         setupFeedDetail(userFeed: selectedFeed)
+    }
+    @objc func updateCounters(_ notification: Notification)  {
+        print(notification.object as Any , notification.userInfo as Any)
+        
+        if ( notification.object! as! [String:Any])["type"] as! actionType == .like && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId  {
+            let totalLit = Int(self.feedList![currentIndex].lits!)!+1
+            self.lblLike.text = "\(totalLit) Lits"
+        }else  if ( notification.object! as! [String:Any])["type"] as! actionType == .more && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId {
+            dismissAll()
+        }
     }
     func setupFeedDetail(userFeed:feed)   {
         self.lblFeedTime.text =  userFeed.time
@@ -321,11 +333,9 @@ public final class ImageViewerController: UIViewController {
     }
     @IBAction func btntestA(_ sender: UIButton) {
         if self.configuration?.actiondelegate != nil {
-            if actionType(rawValue: sender.tag)! == .comment {
-                
-            }
             
-            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: self.feedList![currentIndex].feedId , base: self)
+            
+            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].orignalMedia , base: self)
         }
     }
     @IBAction func swichAction(_ sender: UISwitch) {

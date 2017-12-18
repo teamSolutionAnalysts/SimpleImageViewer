@@ -133,13 +133,15 @@ private extension UIViewContentMode {
     }
 }
 extension ViewController:ActionDelegate{
+    func actionTrigered(action: actionType, feedId: String, mediaUrl: String, base: UIViewController) {
+        print(action,feedId)
+    }
+    
     func markAsViewed(feedId: String) {
         
     }
     
-    func actionTrigered(action: actionType, feedId: String, base: UIViewController) {
-         print(action,feedId)
-    }
+   
     
     func shouldMakeIt(active: Bool, feedId: String) {
         

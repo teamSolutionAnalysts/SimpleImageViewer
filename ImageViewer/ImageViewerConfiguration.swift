@@ -37,7 +37,7 @@ public class owner {
     }
 }
 public protocol ActionDelegate {
-    func actionTrigered(action:actionType,feedId:String,base:UIViewController)
+    func actionTrigered(action:actionType,feedId:String,mediaUrl:String,base:UIViewController)
     func shouldMakeIt(active:Bool,feedId:String)
     func markAsViewed(feedId:String)
 }
@@ -61,7 +61,7 @@ public final class feedContant {
     public var bottomtype:bottomType = .none
     public  var owner:owner!
     
-        public init(feedClosure: feedContantClosure) {
+    public init(feedClosure: feedContantClosure) {
         feedClosure(self)
     }
     
@@ -78,7 +78,7 @@ public class feed {
     public var mediaType:mediaType!
     
     public var viewers : Int!
-
+    
     public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int){
         
         self.thumb = thumb
@@ -106,3 +106,4 @@ public final class ImageViewerConfiguration {
         configurationClosure(self)
     }
 }
+
