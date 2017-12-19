@@ -340,8 +340,9 @@ public final class ImageViewerController: UIViewController {
     }
     @IBAction func swichAction(_ sender: UISwitch) {
         print(sender.isOn)
+        sender.isUserInteractionEnabled = false
         if self.configuration?.actiondelegate != nil {
-            self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: "")
+            self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: self.feedList![currentIndex].feedId)
         }
     }
     
