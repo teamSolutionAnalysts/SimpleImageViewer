@@ -180,6 +180,11 @@ public final class ImageViewerController: UIViewController {
             if  self.spb != nil{
                 self.spb.isPaused = true
             }
+            if selectedFeed.thumb.count > 0 {
+                imageView.kf.setImage(with: URL(string: (selectedFeed.thumb)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
+                    
+                })
+            }
             self.preParevideofor(userFeed: selectedFeed, compilation: { (ready) in
                 self.imageView.isUserInteractionEnabled = true
                 if !self.viewed{
@@ -600,7 +605,7 @@ extension ImageViewerController:SegmentedProgressBarDelegate{
         self.item = nil
         self.playerController = nil
         self.player = nil
-        display(selectedFeed: (self.feedList?[index])!)
+        self.display(selectedFeed: (self.feedList?[index])!)
     }
 }
 

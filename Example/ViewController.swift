@@ -133,6 +133,7 @@ private extension UIViewContentMode {
     }
 }
 extension ViewController:ActionDelegate{
+    
     func actionTrigered(action: actionType, feedId: String, mediaUrl: String, base: UIViewController) {
         print(action,feedId)
     }

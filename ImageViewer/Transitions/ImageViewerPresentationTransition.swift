@@ -18,7 +18,7 @@ final class ImageViewerPresentationTransition: NSObject, UIViewControllerAnimate
         let fromParentView = fromImageView.superview!
 
         let imageView = AnimatableImageView()
-        imageView.image = fromImageView.image
+        //imageView.image = fromImageView.image
         imageView.frame = fromParentView.convert(fromImageView.frame, to: nil)
         imageView.contentMode = fromImageView.contentMode
         
