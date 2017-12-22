@@ -3,6 +3,7 @@ import AVFoundation
 import AVKit
 import Kingfisher
 public final class ImageViewerController: UIViewController {
+    
     var observerHandler = false
     @IBOutlet fileprivate var scrollView: UIScrollView!
     @IBOutlet fileprivate var imageView: UIImageView!
@@ -13,15 +14,10 @@ public final class ImageViewerController: UIViewController {
     @IBOutlet weak var imgOwner: UIImageView!
     @IBOutlet weak var lblOwnerName: UILabel!
     @IBOutlet weak var lblFeedTime: UILabel!
-    //private let images : [UIImage]?
     fileprivate var transitionHandler: ImageViewerTransitioningHandler?
     var item : AVPlayerItem?
     fileprivate let feedcontant: feedContant?
-    
-    
     @IBOutlet weak var proghreshBarYpos: NSLayoutConstraint!
-    
-    
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
     fileprivate var shouldAppear = true
@@ -38,15 +34,9 @@ public final class ImageViewerController: UIViewController {
     @IBOutlet weak var lblLike: UILabel!
     @IBOutlet weak var activateStoryBottom: UIView!
     @IBOutlet weak var bottomArea: UIView!
-    public override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    public override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-    //    override public var prefersStatusBarHidden: Bool {
-    //        return true
-    //    }
+    
+    
+    
     public init(configuration: ImageViewerConfiguration?,contant:feedContant?) {
         self.configuration = configuration
         self.feedcontant = contant
@@ -61,13 +51,19 @@ public final class ImageViewerController: UIViewController {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     override public func viewDidLoad() {
         super.viewDidLoad()
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(ImageViewerController.updateCounters(_:)), name: NSNotification.Name(rawValue: "updateCounters"), object: nil)
-        // imageView.image = configuration?.imageView?.image ?? configuration?.image
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(backgroundNotification(notification:)),
+                                               name: NSNotification.Name.UIApplicationDidEnterBackground,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(foregroundNotification(notification:)),
+                                               name: NSNotification.Name.UIApplicationWillEnterForeground,
+                                               object: nil)
         setupScrollView()
         setupGestureRecognizers()
         setupTransitions()
@@ -88,6 +84,7 @@ public final class ImageViewerController: UIViewController {
         statusBar.backgroundColor = UIColor(patternImage: UIImage(named: "img_bg_plain")!)
         statusBar.tintColor = .white
         if self.player != nil {
+            
             self.player.pause()
         }
     }
@@ -104,7 +101,12 @@ public final class ImageViewerController: UIViewController {
             }
         }
         setUpNavigationBar()
-        
+        if self.feedcontant?.feedType  == .live {
+            if self.player != nil {
+                
+                self.player.play()
+            }
+        }
     }
     
     func setUpNavigationBar()  {
@@ -237,6 +239,29 @@ public final class ImageViewerController: UIViewController {
             })
         }
         setupFeedDetail(userFeed: selectedFeed)
+    }
+    @objc func backgroundNotification(notification: Notification) {
+        print("backgroundNotification")
+        //        if self.spb != nil {
+        //            self.spb.pause()
+        //        }
+        if self.player != nil {
+            self.player.pause()
+        }
+    }
+    @objc func foregroundNotification(notification: Notification) {
+        print("foregroundNotification")
+        //        if self.spb != nil {
+        //            self.spb.resume()
+        //        }
+        if self.player != nil {
+            
+            self.player.play()
+        }
+        
+    }
+    @objc func viewWillForground()  {
+        
     }
     @objc func updateCounters(_ notification: Notification)  {
         print(notification.object as Any , notification.userInfo as Any)
@@ -568,24 +593,27 @@ private extension ImageViewerController {
         }
     }
     @objc func imageViewtappedView(_ recognizer: UIPanGestureRecognizer) {
-        if recognizer.state == .recognized
-        {
-            let touchedPpoint = recognizer.location(in: imageView)
-            if touchedPpoint.x < self.imageView.frame.size.width/2 {
-                if self.spb != nil {
-                    imageView.isUserInteractionEnabled = false
-                    self.spb.rewind()
+        if self.feedcontant?.feedType  == .story {
+            if recognizer.state == .recognized
+            {
+                let touchedPpoint = recognizer.location(in: imageView)
+                if touchedPpoint.x < self.imageView.frame.size.width/2 {
+                    if self.spb != nil {
+                        imageView.isUserInteractionEnabled = false
+                        self.spb.rewind()
+                    }
+                    print("rewi")
+                } else if touchedPpoint.x > self.imageView.frame.size.width/2 {
+                    if self.spb != nil {
+                        imageView.isUserInteractionEnabled = false
+                        self.spb.skip()
+                    }
+                    print("skip")
                 }
-                print("rewi")
-            } else if touchedPpoint.x > self.imageView.frame.size.width/2 {
-                if self.spb != nil {
-                    imageView.isUserInteractionEnabled = false
-                    self.spb.skip()
-                }
-                print("skip")
+                print(recognizer.location(in: imageView))
             }
-            print(recognizer.location(in: imageView))
         }
+        
     }
     @objc func imageViewPanned(_ recognizer: UIPanGestureRecognizer) {
         guard transitionHandler != nil else { return }
