@@ -17,6 +17,11 @@ public final class ImageViewerController: UIViewController {
     fileprivate var transitionHandler: ImageViewerTransitioningHandler?
     var item : AVPlayerItem?
     fileprivate let feedcontant: feedContant?
+    
+    
+    @IBOutlet weak var proghreshBarYpos: NSLayoutConstraint!
+    
+    
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
     fileprivate var shouldAppear = true
@@ -36,7 +41,12 @@ public final class ImageViewerController: UIViewController {
     public override var prefersStatusBarHidden: Bool {
         return true
     }
-    
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    //    override public var prefersStatusBarHidden: Bool {
+    //        return true
+    //    }
     public init(configuration: ImageViewerConfiguration?,contant:feedContant?) {
         self.configuration = configuration
         self.feedcontant = contant
@@ -54,6 +64,7 @@ public final class ImageViewerController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(ImageViewerController.updateCounters(_:)), name: NSNotification.Name(rawValue: "updateCounters"), object: nil)
         // imageView.image = configuration?.imageView?.image ?? configuration?.image
@@ -71,16 +82,17 @@ public final class ImageViewerController: UIViewController {
     
     
     public override func viewWillDisappear(_ animated: Bool) {
-        DispatchQueue.main.async {
-            UIApplication.shared.isStatusBarHidden = false
-        }
+        UIApplication.shared.isStatusBarHidden = false
+        guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
         
+        statusBar.backgroundColor = UIColor(patternImage: UIImage(named: "img_bg_plain")!)
+        statusBar.tintColor = .white
         if self.player != nil {
             self.player.pause()
         }
     }
     public override func viewWillAppear(_ animated: Bool) {
-        UIApplication.shared.isStatusBarHidden = true
+        proghreshBarYpos.constant = isIphoneX() ? 60 : 40
         if shouldAppear {
             shouldAppear = false
             setupSegmentedProgressBarForFeed()
@@ -91,14 +103,42 @@ public final class ImageViewerController: UIViewController {
                 self.setupGradiant()
             }
         }
-        
+        setUpNavigationBar()
         
     }
     
+    func setUpNavigationBar()  {
+        UIApplication.shared.isStatusBarHidden = true
+        navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.backgroundColor = UIColor.clear
+        
+        
+        
+        
+        
+        
+        
+        
+        navigationController?.navigationItem.hidesBackButton = true
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.view.backgroundColor = .clear
+        
+        //        setNeedsStatusBarAppearanceUpdate()
+        //        guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
+        //
+        //        statusBar.backgroundColor = .clear
+        //        statusBar.tintColor = .white
+        
+        
+        
+    }
     func setupSegmentedProgressBarForFeed()  {
         if self.feedcontant?.feedType  == .story {
             self.spb = SegmentedProgressBar(numberOfSegments: self.feedList!.count, durations: (self.feedList?.map({$0.duration}))!)
-            self.spb.frame = CGRect(x: 15, y: 30, width: UIScreen.main.bounds.size.width - 30, height: 3)
+            self.spb.frame = CGRect(x: 15, y: (isIphoneX() ?50:30), width: UIScreen.main.bounds.size.width - 30, height: 3)
             self.spb.delegate = self
             self.spb.topColor = UIColor.white
             self.spb.bottomColor = UIColor.white.withAlphaComponent(0.25)
@@ -202,7 +242,7 @@ public final class ImageViewerController: UIViewController {
         print(notification.object as Any , notification.userInfo as Any)
         
         if ( notification.object! as! [String:Any])["type"] as! actionType == .like && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId  {
-            let totalLit = Int(self.feedList![currentIndex].lits!)!+1
+            let totalLit = (notification.object! as! [String:Any])["lits"] as! Int
             self.lblLike.text = "\(totalLit) Lits"
         }else  if ( notification.object! as! [String:Any])["type"] as! actionType == .more && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId {
             dismissAll()
@@ -238,6 +278,7 @@ public final class ImageViewerController: UIViewController {
         
         playerController?.player = player
         playerController?.view.frame = scrollView.frame
+        //         playerController?.view.frame.origin.y = -60
         self.addChildViewController(playerController!)
         self.imageView.addSubview((playerController?.view)!)
         //        if  self.spb != nil{
@@ -275,17 +316,13 @@ public final class ImageViewerController: UIViewController {
             } else {
                 self?.activityIndicator.startAnimating()
                 
-                
-                
                 if self?.spb != nil {
                     if !(self?.spb.isPaused)! {
                         self?.spb.isPaused = true
                     }
-                    
                 }
             }
         }
-        
     }
     var observer:Any!
     var player : AVPlayer!
@@ -333,7 +370,7 @@ public final class ImageViewerController: UIViewController {
             }
         }
         self.dismiss(animated: true, completion: {
-            UIApplication.shared.isStatusBarHidden = false
+            //            UIApplication.shared.isStatusBarHidden = false
         })
     }
     @IBAction func btntestA(_ sender: UIButton) {
@@ -350,10 +387,36 @@ public final class ImageViewerController: UIViewController {
             self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: self.feedList![currentIndex].feedId)
         }
     }
-    
     deinit {
-        
         NotificationCenter.default.removeObserver(self)
+    }
+    func isIphoneX() -> Bool {
+        if UIDevice().userInterfaceIdiom == .phone {
+            switch UIScreen.main.nativeBounds.height {
+            case 1136:
+                print("iPhone 5 or 5S or 5C")
+                return false
+                
+            case 1334:
+                print("iPhone 6/6S/7/8")
+                return false
+                
+            case 2208:
+                print("iPhone 6+/6S+/7+/8+")
+                return false
+                
+            case 2436:
+                print("iPhone X")
+                return true
+                
+            default:
+                print("unknown")
+                return false
+                
+            }
+        } else {
+            return false
+        }
     }
 }
 
@@ -533,9 +596,9 @@ private extension ImageViewerController {
         switch recognizer.state {
         case .began:
             transitionHandler?.dismissInteractively = true
-            DispatchQueue.main.async {
-                self.dismissAll()
-            }
+            //            DispatchQueue.main.async {
+            self.dismissAll()
+        //            }
         case .changed:
             let percentage = abs(translation.y) / imageView.bounds.height
             transitionHandler?.dismissalInteractor.update(percentage: percentage)

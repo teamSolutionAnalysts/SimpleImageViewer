@@ -34,6 +34,7 @@
                 <outlet property="lblLike" destination="NeB-g1-dSf" id="Hcl-tn-Ipo"/>
                 <outlet property="lblOwnerName" destination="70j-a4-zUq" id="k8z-8w-PUd"/>
                 <outlet property="lblcmt" destination="t96-u4-w8M" id="Agl-iV-A6a"/>
+                <outlet property="proghreshBarYpos" destination="g0J-bA-RcC" id="2uv-mf-xjf"/>
                 <outlet property="scrollView" destination="cQD-2Q-pvo" id="M6k-QU-OVY"/>
                 <outlet property="swichActive" destination="8f6-ul-q8R" id="MiL-js-OKN"/>
                 <outlet property="switchWidth" destination="IOO-3j-yS7" id="Nue-6l-vSv"/>
