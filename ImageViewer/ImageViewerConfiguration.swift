@@ -78,8 +78,8 @@ public class feed {
     public var mediaType:mediaType!
     
     public var viewers : Int!
-    
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int){
+    public var branchLink:String!
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String){
         
         self.thumb = thumb
         self.orignalMedia = orignalMedia
@@ -91,6 +91,7 @@ public class feed {
         self.mediaType = mediaType
         self.duration = duration
         self.viewers = viewers
+        self.branchLink = branchLink
     }
     
     
