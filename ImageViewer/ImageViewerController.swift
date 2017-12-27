@@ -199,7 +199,7 @@ public final class ImageViewerController: UIViewController {
             imageView.isUserInteractionEnabled = true
             activityIndicator.startAnimating()
             
-            imageView.kf.setImage(with: URL(string: (selectedFeed.orignalMedia)!), placeholder: (configuration?.imageView?.image ?? configuration?.image), options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
+            imageView.kf.setImage(with: URL(string: (selectedFeed.orignalMedia)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
                 if image != nil{
                     self.activityIndicator.stopAnimating()
                     
