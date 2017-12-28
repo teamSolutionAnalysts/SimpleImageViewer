@@ -22,6 +22,7 @@ public final class ImageViewerController: UIViewController {
     @IBOutlet weak var proghreshBarYpos: NSLayoutConstraint!
     
     
+    @IBOutlet weak var btnLiveViewer: UIButton!
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
     fileprivate var shouldAppear = true
@@ -102,6 +103,7 @@ public final class ImageViewerController: UIViewController {
             DispatchQueue.main.async {
                 self.setupGradiant()
             }
+            
         }
         setUpNavigationBar()
         
@@ -187,7 +189,6 @@ public final class ImageViewerController: UIViewController {
             self.imgOwner.image = user.image
         } else {
             self.imgOwner.kf.indicatorType = .activity
-            //            self.imgOwner.kf.indicator?.startAnimatingView()
             self.imgOwner.kf.setImage(with: URL(string:(user.originalImage)! ))
         }
     }
@@ -198,11 +199,9 @@ public final class ImageViewerController: UIViewController {
         if selectedFeed.mediaType == .image{
             imageView.isUserInteractionEnabled = true
             activityIndicator.startAnimating()
-            
             imageView.kf.setImage(with: URL(string: (selectedFeed.orignalMedia)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
                 if image != nil{
                     self.activityIndicator.stopAnimating()
-                    
                     if self.configuration?.actiondelegate != nil {
                         if !self.viewed{
                             self.viewed = true
@@ -216,6 +215,11 @@ public final class ImageViewerController: UIViewController {
                 }
             })
         } else {
+            if (self.feedcontant?.turnSoket)! {
+                if self.configuration?.actiondelegate != nil {
+                    self.configuration?.actiondelegate?.startListen(action: .Listen, feedId: self.feedList![currentIndex].feedId)
+                }
+            }
             activityIndicator.startAnimating()
             if  self.spb != nil{
                 self.spb.isPaused = true
@@ -246,6 +250,10 @@ public final class ImageViewerController: UIViewController {
             self.lblLike.text = "\(totalLit) Lits"
         }else  if ( notification.object! as! [String:Any])["type"] as! actionType == .more && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId {
             dismissAll()
+        } else if ( notification.object! as! [String:Any])["type"] as! actionType == .Listen {
+            let total = (notification.object! as! [String:Any])["users"] as! String
+            self.btnLiveViewer.isHidden = false
+            self.btnLiveViewer.setTitle("   \(total)", for: .normal)
         }
     }
     func setupFeedDetail(userFeed:feed)   {
@@ -278,15 +286,10 @@ public final class ImageViewerController: UIViewController {
         
         playerController?.player = player
         playerController?.view.frame = scrollView.frame
-        //         playerController?.view.frame.origin.y = -60
         self.addChildViewController(playerController!)
         self.imageView.addSubview((playerController?.view)!)
-        //        if  self.spb != nil{
-        //            self.spb.isPaused = true
-        //        }
-        //        DispatchQueue.main.async {
+        
         player.play()
-        //        }
         self.observer = player.addPeriodicTimeObserver(forInterval: CMTimeMake(1, 600), queue: DispatchQueue.main) {
             [weak self] time in
             
@@ -303,9 +306,6 @@ public final class ImageViewerController: UIViewController {
                         
                     }
                 } else {
-                    
-                    
-                    
                     self?.activityIndicator.startAnimating()
                     if self?.spb != nil {
                         if !(self?.spb.isPaused)! {
@@ -370,7 +370,11 @@ public final class ImageViewerController: UIViewController {
             }
         }
         self.dismiss(animated: true, completion: {
-            //            UIApplication.shared.isStatusBarHidden = false
+            if (self.feedcontant?.turnSoket)! {
+                if self.configuration?.actiondelegate != nil {
+                    self.configuration?.actiondelegate?.startListen(action: .Listen, feedId: "")
+                }
+            }
         })
     }
     @IBAction func btntestA(_ sender: UIButton) {

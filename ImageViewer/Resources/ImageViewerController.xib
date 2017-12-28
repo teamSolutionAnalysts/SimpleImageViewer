@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13770" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13770"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -25,6 +25,7 @@
                 <outlet property="activityIndicator" destination="oPl-2f-Knx" id="GOD-eG-o96"/>
                 <outlet property="bottomArea" destination="GcT-xj-pVO" id="tX9-VN-KXJ"/>
                 <outlet property="bottomGradiant" destination="I4W-Za-eeq" id="9Lw-4X-yiL"/>
+                <outlet property="btnLiveViewer" destination="knX-BO-Coy" id="dRP-3T-sId"/>
                 <outlet property="btnViews" destination="bY9-fb-2kF" id="dII-xk-NYg"/>
                 <outlet property="imageView" destination="rHA-5m-kkS" id="V86-k1-pPH"/>
                 <outlet property="imgOwner" destination="8i0-Od-tIr" id="3In-hG-PEZ"/>
@@ -72,6 +73,14 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GcT-xj-pVO">
                     <rect key="frame" x="0.0" y="577" width="375" height="80"/>
                     <subviews>
+                        <button hidden="YES" opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="knX-BO-Coy">
+                            <rect key="frame" x="175" y="27" width="25" height="25"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="knX-BO-Coy" secondAttribute="height" multiplier="1:1" id="9Jm-cm-Hsp"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                            <state key="normal" image="activate-view"/>
+                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QUF-nw-rsI">
                             <rect key="frame" x="0.0" y="15" width="50" height="50"/>
                             <constraints>
@@ -144,8 +153,10 @@
                         <constraint firstItem="QUF-nw-rsI" firstAttribute="width" secondItem="GcT-xj-pVO" secondAttribute="width" multiplier="0.133333" id="B3V-ob-Ud9"/>
                         <constraint firstItem="xYz-Z0-5fo" firstAttribute="leading" secondItem="ByJ-uI-0qn" secondAttribute="trailing" constant="15" id="FbS-Ku-7aj"/>
                         <constraint firstItem="ByJ-uI-0qn" firstAttribute="leading" secondItem="QUF-nw-rsI" secondAttribute="trailing" constant="15" id="PPZ-AU-6M3"/>
+                        <constraint firstItem="knX-BO-Coy" firstAttribute="centerY" secondItem="EOa-Ph-pAv" secondAttribute="centerY" id="VeH-cO-WUH"/>
                         <constraint firstItem="xYz-Z0-5fo" firstAttribute="width" secondItem="ByJ-uI-0qn" secondAttribute="width" id="WY9-aB-y4x"/>
                         <constraint firstItem="t96-u4-w8M" firstAttribute="centerX" secondItem="ByJ-uI-0qn" secondAttribute="centerX" id="XTA-EI-kuD"/>
+                        <constraint firstItem="knX-BO-Coy" firstAttribute="leading" secondItem="xYz-Z0-5fo" secondAttribute="trailing" constant="-5" id="Yfb-cg-sCE"/>
                         <constraint firstItem="ByJ-uI-0qn" firstAttribute="height" secondItem="QUF-nw-rsI" secondAttribute="height" id="d03-S0-a0t"/>
                         <constraint firstItem="QUF-nw-rsI" firstAttribute="top" secondItem="cvE-BL-2lU" secondAttribute="bottom" constant="5" id="gcd-kA-3B6"/>
                         <constraint firstItem="cvE-BL-2lU" firstAttribute="leading" secondItem="GcT-xj-pVO" secondAttribute="leading" constant="10" id="jJO-Ca-jMR"/>
@@ -289,6 +300,11 @@
                 <constraint firstItem="rHA-5m-kkS" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="tGF-Ia-4A0"/>
                 <constraint firstAttribute="trailing" secondItem="q7X-OF-6SL" secondAttribute="trailing" id="wEh-f6-VCE"/>
             </constraints>
+            <variation key="default">
+                <mask key="subviews">
+                    <exclude reference="rjN-0H-56r"/>
+                </mask>
+            </variation>
             <point key="canvasLocation" x="33.5" y="54.5"/>
         </view>
     </objects>

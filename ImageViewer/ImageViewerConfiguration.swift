@@ -40,10 +40,12 @@ public protocol ActionDelegate {
     func actionTrigered(action:actionType,feedId:String,mediaUrl:String,base:UIViewController)
     func shouldMakeIt(active:Bool,feedId:String)
     func markAsViewed(feedId:String)
+    func startListen(action:actionType,feedId:String)
 }
 public enum feedType:Int{
     case story = 0
     case live = 1
+    
 }
 public enum actionType:Int{
     case like = 0
@@ -51,11 +53,12 @@ public enum actionType:Int{
     case share = 2
     case more = 3
     case viewerList = 4
+    case Listen = 5
 }
 public final class feedContant {
     
     public typealias feedContantClosure = (feedContant) -> ()
-    
+    public var turnSoket:Bool!
     public  var feedList:[feed]!
     public var feedType:feedType!
     public var bottomtype:bottomType = .none
