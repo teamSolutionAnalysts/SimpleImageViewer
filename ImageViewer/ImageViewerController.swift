@@ -88,6 +88,7 @@ public final class ImageViewerController: UIViewController {
         
         statusBar.backgroundColor = UIColor(patternImage: UIImage(named: "img_bg_plain")!)
         statusBar.tintColor = .white
+        
         if self.player != nil {
             self.player.pause()
         }
@@ -106,7 +107,9 @@ public final class ImageViewerController: UIViewController {
             
         }
         setUpNavigationBar()
-        
+        if self.player != nil {
+            self.player.play()
+        }
     }
     
     func setUpNavigationBar()  {
@@ -137,6 +140,8 @@ public final class ImageViewerController: UIViewController {
         
         
     }
+    
+    
     func setupSegmentedProgressBarForFeed()  {
         if self.feedcontant?.feedType  == .story {
             self.spb = SegmentedProgressBar(numberOfSegments: self.feedList!.count, durations: (self.feedList?.map({$0.duration}))!)
@@ -151,7 +156,9 @@ public final class ImageViewerController: UIViewController {
             self.spb.isPaused = true
         }
     }
+    
     func setupBottom()  {
+        
         if self.feedcontant?.bottomtype == .feed {
             self.bottomArea.isHidden = false
             self.activateStoryBottom.isHidden = true
@@ -181,6 +188,7 @@ public final class ImageViewerController: UIViewController {
             self.activateStoryBottom.isHidden = true
         }
     }
+    
     func setupeOwnerDetail(user:owner)  {
         self.imgOwner.layer.cornerRadius = self.imgOwner.frame.size.width/2
         self.imgOwner.clipsToBounds = true
@@ -226,7 +234,6 @@ public final class ImageViewerController: UIViewController {
             }
             if selectedFeed.thumb.count > 0 {
                 imageView.kf.setImage(with: URL(string: (selectedFeed.thumb)!), placeholder: nil, options: [.transition(.fade(0.5)), .forceTransition], progressBlock: nil, completionHandler: { image ,erroe, cash ,options in
-                    
                 })
             }
             self.preParevideofor(userFeed: selectedFeed, compilation: { (ready) in
@@ -235,16 +242,13 @@ public final class ImageViewerController: UIViewController {
                     self.viewed = true
                     self.configuration?.actiondelegate?.markAsViewed(feedId: selectedFeed.feedId)
                 }
-                //                    DispatchQueue.main.async {
                 self.playVideo()
-                //                    }
             })
         }
         setupFeedDetail(userFeed: selectedFeed)
     }
     @objc func updateCounters(_ notification: Notification)  {
         print(notification.object as Any , notification.userInfo as Any)
-        
         if ( notification.object! as! [String:Any])["type"] as! actionType == .like && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId  {
             let totalLit = (notification.object! as! [String:Any])["lits"] as! Int
             self.lblLike.text = "\(totalLit) Lits"
@@ -254,6 +258,10 @@ public final class ImageViewerController: UIViewController {
             let total = (notification.object! as! [String:Any])["users"] as! String
             self.btnLiveViewer.isHidden = false
             self.btnLiveViewer.setTitle("   \(total)", for: .normal)
+        } else if ( notification.object! as! [String:Any])["type"] as! actionType == .comment {
+            let total = (notification.object! as! [String:Any])["count"] as! Int
+            self.lblcmt.text = "\(total) Comments"
+            
         }
     }
     func setupFeedDetail(userFeed:feed)   {
@@ -375,6 +383,7 @@ public final class ImageViewerController: UIViewController {
                     self.configuration?.actiondelegate?.startListen(action: .Listen, feedId: "")
                 }
             }
+            
         })
     }
     @IBAction func btntestA(_ sender: UIButton) {
