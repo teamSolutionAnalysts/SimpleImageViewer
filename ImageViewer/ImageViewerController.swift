@@ -84,10 +84,7 @@ public final class ImageViewerController: UIViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         UIApplication.shared.isStatusBarHidden = false
-        guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
-        
-        statusBar.backgroundColor = UIColor(patternImage: UIImage(named: "img_bg_plain")!)
-        statusBar.tintColor = .white
+       
         
         if self.player != nil {
             self.player.pause()
