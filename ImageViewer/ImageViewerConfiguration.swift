@@ -37,7 +37,7 @@ public class owner {
     }
 }
 public protocol ActionDelegate {
-    func actionTrigered(action: actionType, masterIndex: Int, index: Int,feedId: String,mediaUrl:String,base:UIViewController)
+    func actionTrigered(action: actionType, masterIndex: Int?, index: Int?,feedId: String,mediaUrl:String,base:UIViewController)
     
     func shouldMakeIt(active:Bool,feedId:String)
     func markAsViewed(feedId:String)

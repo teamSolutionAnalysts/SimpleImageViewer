@@ -3,6 +3,8 @@ import AVFoundation
 import AVKit
 import Kingfisher
 public final class ImageViewerController: UIViewController {
+    
+    
     var observerHandler = false
     @IBOutlet fileprivate var scrollView: UIScrollView!
     @IBOutlet fileprivate var imageView: UIImageView!
@@ -35,6 +37,8 @@ public final class ImageViewerController: UIViewController {
     @IBOutlet weak var lblLike: UILabel!
     @IBOutlet weak var activateStoryBottom: UIView!
     @IBOutlet weak var bottomArea: UIView!
+    
+    
     public override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -45,6 +49,8 @@ public final class ImageViewerController: UIViewController {
     @IBOutlet weak var btnShare: UIButton!
     @IBOutlet weak var btnLike: UIButton!
     @IBOutlet weak var btnComment: UIButton!
+    
+    
     public init(configuration: ImageViewerConfiguration?,contant:feedContant?) {
         self.configuration = configuration
         self.feedcontant = contant
@@ -71,13 +77,6 @@ public final class ImageViewerController: UIViewController {
         setupActivityIndicator()
     }
     
-    
-    
-    
-    
-    
-    
-    
     public override func viewWillDisappear(_ animated: Bool) {
         UIApplication.shared.isStatusBarHidden = false
         guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
@@ -89,6 +88,8 @@ public final class ImageViewerController: UIViewController {
             self.player.pause()
         }
     }
+    
+    
     public override func viewWillAppear(_ animated: Bool) {
         proghreshBarYpos.constant = isIphoneX() ? 60 : 40
         if shouldAppear {
@@ -97,10 +98,10 @@ public final class ImageViewerController: UIViewController {
             setupeOwnerDetail(user: (self.feedcontant?.owner)!)
             setupBottom()
             display(selectedFeed: self.feedList![0])
+            
             DispatchQueue.main.async {
                 self.setupGradiant()
             }
-            
         }
         setUpNavigationBar()
         if self.player != nil {
@@ -108,31 +109,17 @@ public final class ImageViewerController: UIViewController {
         }
     }
     
-    
     func setUpNavigationBar()  {
         UIApplication.shared.isStatusBarHidden = true
         navigationController?.navigationBar.isHidden = false
         navigationController?.navigationBar.backgroundColor = UIColor.clear
-        
-        
-        
-        
-        
-        
-        
-        
         navigationController?.navigationItem.hidesBackButton = true
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.tintColor = UIColor.white
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.view.backgroundColor = .clear
-        
-        
-        
-        
     }
-    
     
     func setupSegmentedProgressBarForFeed()  {
         if self.feedcontant?.feedType  == .story {
@@ -149,10 +136,18 @@ public final class ImageViewerController: UIViewController {
         }
     }
     
+    
+    
     func setupBottom()  {
         
-        if self.feedcontant?.bottomtype == .feed {
+        if self.feedcontant?.bottomtype == .feed {//
             self.bottomArea.isHidden = false
+            btnLike.isHidden = false
+            lblLike.isHidden = false
+            lblcmt.isHidden = false
+            btnComment.isHidden = false
+            btnShare.isHidden = false
+            btnLiveViewer.isHidden = false
             self.activateStoryBottom.isHidden = true
             btnShare.isHidden =  self.feedList![currentIndex].branchLink.count > 0 ? false : true
         }else if self.feedcontant?.bottomtype == .activateStory {
@@ -162,15 +157,28 @@ public final class ImageViewerController: UIViewController {
             self.lblActiveSory.text = "Activate this story"
             switchWidth.constant = 51
             swichActive.isHidden = false
-        } else if self.feedcontant?.bottomtype == .activateStoryWithEye {
-            self.bottomArea.isHidden = true
+        } else if self.feedcontant?.bottomtype == .activateStoryWithEye {//own story
+            self.bottomArea.isHidden = false
             self.activateStoryBottom.isHidden = false
             self.lblActiveSory.text = "Activate this story"
             self.btnViews.isHidden = false
             switchWidth.constant = 51
             swichActive.isHidden = false
-        } else if self.feedcontant?.bottomtype == .eye {
-            self.bottomArea.isHidden = true
+            
+            btnLike.isHidden = true
+            lblLike.isHidden = true
+            lblcmt.isHidden = true
+            btnComment.isHidden = true
+            btnShare.isHidden = true
+            btnLiveViewer.isHidden = true
+        } else if self.feedcontant?.bottomtype == .eye {//own story
+            self.bottomArea.isHidden = false
+            btnLike.isHidden = true
+            lblLike.isHidden = true
+            lblcmt.isHidden = true
+            btnComment.isHidden = true
+            btnShare.isHidden = true
+            btnLiveViewer.isHidden = true
             self.activateStoryBottom.isHidden = false
             switchWidth.constant = 0
             self.lblActiveSory.text = ""
@@ -178,6 +186,12 @@ public final class ImageViewerController: UIViewController {
             swichActive.isHidden = true
         } else {
             self.bottomArea.isHidden = true
+            btnLike.isHidden = true
+            lblLike.isHidden = true
+            lblcmt.isHidden = true
+            btnComment.isHidden = true
+            btnShare.isHidden = true
+            btnLiveViewer.isHidden = true
             self.activateStoryBottom.isHidden = true
         }
     }
@@ -263,6 +277,9 @@ public final class ImageViewerController: UIViewController {
         self.lblcmt.text = "\(userFeed.comments!) Comments"
         self.lblDiscription.text = userFeed.discription!
         self.btnViews.setTitle(" \(userFeed.viewers!)", for: .normal)
+        
+        
+        
     }
     func preParevideofor(userFeed:feed, compilation: @escaping videoHandler)  {
         
@@ -383,7 +400,7 @@ public final class ImageViewerController: UIViewController {
         if self.configuration?.actiondelegate != nil {
             
             
-            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, masterIndex: self.feedList![currentIndex].masterIndex ?? 0, index: self.feedList![currentIndex].index ?? 0, feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self)
+            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, masterIndex: self.feedList![currentIndex].masterIndex , index: self.feedList![currentIndex].index , feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self)
         }
     }
     @IBAction func swichAction(_ sender: UISwitch) {
