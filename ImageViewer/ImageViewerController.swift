@@ -17,11 +17,7 @@ public final class ImageViewerController: UIViewController {
     fileprivate var transitionHandler: ImageViewerTransitioningHandler?
     var item : AVPlayerItem?
     fileprivate let feedcontant: feedContant?
-    
-    
     @IBOutlet weak var proghreshBarYpos: NSLayoutConstraint!
-    
-    
     @IBOutlet weak var btnLiveViewer: UIButton!
     fileprivate var spb: SegmentedProgressBar!
     fileprivate let configuration: ImageViewerConfiguration?
@@ -45,9 +41,10 @@ public final class ImageViewerController: UIViewController {
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-    //    override public var prefersStatusBarHidden: Bool {
-    //        return true
-    //    }
+    
+    @IBOutlet weak var btnShare: UIButton!
+    @IBOutlet weak var btnLike: UIButton!
+    @IBOutlet weak var btnComment: UIButton!
     public init(configuration: ImageViewerConfiguration?,contant:feedContant?) {
         self.configuration = configuration
         self.feedcontant = contant
@@ -68,7 +65,6 @@ public final class ImageViewerController: UIViewController {
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(ImageViewerController.updateCounters(_:)), name: NSNotification.Name(rawValue: "updateCounters"), object: nil)
-        // imageView.image = configuration?.imageView?.image ?? configuration?.image
         setupScrollView()
         setupGestureRecognizers()
         setupTransitions()
@@ -84,7 +80,10 @@ public final class ImageViewerController: UIViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         UIApplication.shared.isStatusBarHidden = false
-       
+        guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
+        
+        statusBar.backgroundColor = UIColor(patternImage: UIImage(named: "img_bg_plain")!)
+        statusBar.tintColor = .white
         
         if self.player != nil {
             self.player.pause()
@@ -109,6 +108,7 @@ public final class ImageViewerController: UIViewController {
         }
     }
     
+    
     func setUpNavigationBar()  {
         UIApplication.shared.isStatusBarHidden = true
         navigationController?.navigationBar.isHidden = false
@@ -128,11 +128,6 @@ public final class ImageViewerController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.view.backgroundColor = .clear
         
-        //        setNeedsStatusBarAppearanceUpdate()
-        //        guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
-        //
-        //        statusBar.backgroundColor = .clear
-        //        statusBar.tintColor = .white
         
         
         
@@ -159,6 +154,7 @@ public final class ImageViewerController: UIViewController {
         if self.feedcontant?.bottomtype == .feed {
             self.bottomArea.isHidden = false
             self.activateStoryBottom.isHidden = true
+            btnShare.isHidden =  self.feedList![currentIndex].branchLink.count > 0 ? false : true
         }else if self.feedcontant?.bottomtype == .activateStory {
             self.bottomArea.isHidden = true
             self.activateStoryBottom.isHidden = false
@@ -387,7 +383,7 @@ public final class ImageViewerController: UIViewController {
         if self.configuration?.actiondelegate != nil {
             
             
-            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self)
+            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, masterIndex: self.feedList![currentIndex].masterIndex ?? 0, index: self.feedList![currentIndex].index ?? 0, feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self)
         }
     }
     @IBAction func swichAction(_ sender: UISwitch) {
@@ -563,6 +559,10 @@ private extension ImageViewerController {
     
     
     @objc func playerItemDidReachEnd(notification: Notification) {
+        print("Stop")
+        if self.feedcontant?.feedType  != .story {
+            dismissAll()
+        }
         //guard let playerItemq = notification.object as? AVPlayerItem else { return }
         //playerItem.seek(to: kCMTimeZero)
     }

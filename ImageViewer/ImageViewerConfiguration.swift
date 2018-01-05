@@ -37,7 +37,8 @@ public class owner {
     }
 }
 public protocol ActionDelegate {
-    func actionTrigered(action:actionType,feedId:String,mediaUrl:String,base:UIViewController)
+    func actionTrigered(action: actionType, masterIndex: Int, index: Int,feedId: String,mediaUrl:String,base:UIViewController)
+    
     func shouldMakeIt(active:Bool,feedId:String)
     func markAsViewed(feedId:String)
     func startListen(action:actionType,feedId:String)
@@ -82,7 +83,11 @@ public class feed {
     
     public var viewers : Int!
     public var branchLink:String!
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String){
+    
+    
+    public var masterIndex : Int!
+    public var index : Int!
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?){
         
         self.thumb = thumb
         self.orignalMedia = orignalMedia
@@ -95,6 +100,8 @@ public class feed {
         self.duration = duration
         self.viewers = viewers
         self.branchLink = branchLink
+        self.masterIndex = masterIndex
+        self.index = index
     }
     
     
