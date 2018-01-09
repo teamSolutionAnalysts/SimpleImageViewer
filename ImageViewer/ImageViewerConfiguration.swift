@@ -37,7 +37,7 @@ public class owner {
     }
 }
 public protocol ActionDelegate {
-    func actionTrigered(action: actionType, masterIndex: Int?, index: Int?,feedId: String,mediaUrl:String,base:UIViewController)
+    func actionTrigered(action: actionType, masterIndex: Int?, index: Int?,feedId: String,mediaUrl:String,base:UIViewController,baseFeedType:feedType)
     
     func shouldMakeIt(active:Bool,feedId:String)
     func markAsViewed(feedId:String)
@@ -47,6 +47,17 @@ public enum feedType:Int{
     case story = 0
     case live = 1
     
+}
+public enum OwnerType:Int{
+    case me = 0
+    case other = 1
+    
+}
+public enum individualFeedType:String {
+    case storyImage = "StoryImage"
+    case storyVideo = "StoryVideo"
+    case liveStreamVideo = "LiveStreamVideo"
+    case liveStream = "LiveStream"
 }
 public enum actionType:Int{
     case like = 0
@@ -64,7 +75,7 @@ public final class feedContant {
     public var feedType:feedType!
     public var bottomtype:bottomType = .none
     public  var owner:owner!
-    
+    public  var ownerType:OwnerType!
     public init(feedClosure: feedContantClosure) {
         feedClosure(self)
     }
@@ -83,12 +94,12 @@ public class feed {
     
     public var viewers : Int!
     public var branchLink:String!
-    
+    public var individualFeedType:individualFeedType!
     
     public var masterIndex : Int!
     public var index : Int!
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?){
-        
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?,individualFeedType:individualFeedType){
+        self.individualFeedType = individualFeedType
         self.thumb = thumb
         self.orignalMedia = orignalMedia
         self.feedId = feedId

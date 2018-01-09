@@ -263,8 +263,10 @@ public final class ImageViewerController: UIViewController {
             dismissAll()
         } else if ( notification.object! as! [String:Any])["type"] as! actionType == .Listen {
             let total = (notification.object! as! [String:Any])["users"] as! String
+            
             self.btnLiveViewer.isHidden = false
             self.btnLiveViewer.setTitle("   \(total)", for: .normal)
+            
         } else if ( notification.object! as! [String:Any])["type"] as! actionType == .comment {
             let total = (notification.object! as! [String:Any])["count"] as! Int
             self.lblcmt.text = "\(total) Comments"
@@ -276,6 +278,9 @@ public final class ImageViewerController: UIViewController {
         self.lblLike.text = "\(userFeed.lits!) Lits"
         self.lblcmt.text = "\(userFeed.comments!) Comments"
         self.lblDiscription.text = userFeed.discription!
+        if userFeed.individualFeedType == .liveStreamVideo{
+            self.btnLiveViewer.setTitle(" \(userFeed.viewers!)", for: .normal)
+        }
         self.btnViews.setTitle(" \(userFeed.viewers!)", for: .normal)
         
         
@@ -400,7 +405,7 @@ public final class ImageViewerController: UIViewController {
         if self.configuration?.actiondelegate != nil {
             
             
-            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, masterIndex: self.feedList![currentIndex].masterIndex , index: self.feedList![currentIndex].index , feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self)
+            self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, masterIndex: self.feedList![currentIndex].masterIndex , index: self.feedList![currentIndex].index , feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self, baseFeedType: (self.feedcontant?.feedType)!)
         }
     }
     @IBAction func swichAction(_ sender: UISwitch) {
