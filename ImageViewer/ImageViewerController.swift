@@ -79,10 +79,7 @@ public final class ImageViewerController: UIViewController {
     
     public override func viewWillDisappear(_ animated: Bool) {
         UIApplication.shared.isStatusBarHidden = false
-        guard let statusBar = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else { return }
         
-        statusBar.backgroundColor = UIColor(patternImage: UIImage(named: "img_bg_plain")!)
-        statusBar.tintColor = .white
         
         if self.player != nil {
             self.player.pause()
@@ -91,6 +88,7 @@ public final class ImageViewerController: UIViewController {
     
     
     public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         proghreshBarYpos.constant = isIphoneX() ? 60 : 40
         if shouldAppear {
             shouldAppear = false
@@ -98,12 +96,12 @@ public final class ImageViewerController: UIViewController {
             setupeOwnerDetail(user: (self.feedcontant?.owner)!)
             setupBottom()
             display(selectedFeed: self.feedList![0])
-            
+            setUpNavigationBar()
             DispatchQueue.main.async {
                 self.setupGradiant()
             }
         }
-        setUpNavigationBar()
+        
         if self.player != nil {
             self.player.play()
         }
@@ -208,6 +206,7 @@ public final class ImageViewerController: UIViewController {
         }
     }
     func display(selectedFeed:feed)  {
+        UIApplication.shared.isStatusBarHidden = true
         if  self.spb != nil{
             self.spb.isPaused = true
         }
@@ -393,6 +392,7 @@ public final class ImageViewerController: UIViewController {
             }
         }
         self.dismiss(animated: true, completion: {
+            UIApplication.shared.isStatusBarHidden = false
             if (self.feedcontant?.turnSoket)! {
                 if self.configuration?.actiondelegate != nil {
                     self.configuration?.actiondelegate?.startListen(action: .Listen, feedId: "")
@@ -589,9 +589,11 @@ private extension ImageViewerController {
         //playerItem.seek(to: kCMTimeZero)
     }
     @IBAction func closeButtonPressed() {
-        dismissAll()
+        DispatchQueue.main.async {
+            self.dismissAll()
+        }
         
-        //dismiss(animated: true)
+        
     }
     
     @objc func imageViewDoubleTapped() {
