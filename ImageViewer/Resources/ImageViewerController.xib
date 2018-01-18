@@ -176,9 +176,14 @@
                         <constraint firstItem="EOa-Ph-pAv" firstAttribute="height" secondItem="QUF-nw-rsI" secondAttribute="height" id="wvm-gb-SHI"/>
                         <constraint firstAttribute="bottom" secondItem="QUF-nw-rsI" secondAttribute="bottom" constant="15" id="z76-BK-Kme"/>
                     </constraints>
+                    <variation key="default">
+                        <mask key="subviews">
+                            <exclude reference="knX-BO-Coy"/>
+                        </mask>
+                    </variation>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rjN-0H-56r">
-                    <rect key="frame" x="74" y="597" width="227" height="40"/>
+                    <rect key="frame" x="89.5" y="597" width="196.5" height="40"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Activate this story" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L3e-Sv-NQ0">
                             <rect key="frame" x="0.0" y="0.0" width="137.5" height="40"/>
@@ -210,6 +215,7 @@
                         <constraint firstAttribute="bottom" secondItem="bY9-fb-2kF" secondAttribute="bottom" id="Ftf-oY-VTd"/>
                         <constraint firstItem="bY9-fb-2kF" firstAttribute="leading" secondItem="8f6-ul-q8R" secondAttribute="trailing" constant="10.5" id="IBC-oD-yQM"/>
                         <constraint firstItem="8f6-ul-q8R" firstAttribute="top" secondItem="rjN-0H-56r" secondAttribute="top" constant="4" id="Tvn-Y1-mfS"/>
+                        <constraint firstAttribute="trailing" secondItem="8f6-ul-q8R" secondAttribute="trailing" constant="5" id="ZFI-Dm-5dC"/>
                         <constraint firstItem="L3e-Sv-NQ0" firstAttribute="top" secondItem="rjN-0H-56r" secondAttribute="top" id="bUt-hi-MZK"/>
                         <constraint firstItem="L3e-Sv-NQ0" firstAttribute="leading" secondItem="rjN-0H-56r" secondAttribute="leading" id="n7L-Dl-VnR"/>
                         <constraint firstItem="8f6-ul-q8R" firstAttribute="leading" secondItem="L3e-Sv-NQ0" secondAttribute="trailing" constant="5" id="nwy-6Q-9Gf"/>
@@ -217,6 +223,11 @@
                         <constraint firstAttribute="trailing" secondItem="bY9-fb-2kF" secondAttribute="trailing" id="tF9-RV-py8"/>
                         <constraint firstAttribute="bottom" secondItem="L3e-Sv-NQ0" secondAttribute="bottom" id="xv3-Uu-5Gi"/>
                     </constraints>
+                    <variation key="default">
+                        <mask key="subviews">
+                            <exclude reference="bY9-fb-2kF"/>
+                        </mask>
+                    </variation>
                 </view>
                 <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="oPl-2f-Knx">
                     <rect key="frame" x="169" y="315" width="37" height="37"/>
