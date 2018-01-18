@@ -70,8 +70,11 @@
                     </connections>
                 </scrollView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I4W-Za-eeq">
-                    <rect key="frame" x="0.0" y="567" width="375" height="100"/>
+                    <rect key="frame" x="0.0" y="517" width="375" height="150"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="150" id="kmd-ST-9Ew"/>
+                    </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GcT-xj-pVO">
                     <rect key="frame" x="0.0" y="577" width="375" height="80"/>
@@ -294,16 +297,14 @@
                 <constraint firstItem="oPl-2f-Knx" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="4hr-Ua-OMa"/>
                 <constraint firstItem="cQD-2Q-pvo" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="ErM-q5-uey"/>
                 <constraint firstItem="rjN-0H-56r" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Lee-qn-AgL"/>
-                <constraint firstItem="I4W-Za-eeq" firstAttribute="centerY" secondItem="GcT-xj-pVO" secondAttribute="centerY" id="QzB-B6-tae"/>
-                <constraint firstAttribute="bottom" secondItem="I4W-Za-eeq" secondAttribute="bottom" id="UAa-VF-KHt"/>
-                <constraint firstItem="I4W-Za-eeq" firstAttribute="centerX" secondItem="GcT-xj-pVO" secondAttribute="centerX" id="WcJ-iK-82k"/>
+                <constraint firstAttribute="bottom" secondItem="I4W-Za-eeq" secondAttribute="bottom" id="OzB-FK-d3q"/>
+                <constraint firstAttribute="trailing" secondItem="I4W-Za-eeq" secondAttribute="trailing" id="Pmd-SX-THk"/>
                 <constraint firstItem="rHA-5m-kkS" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="Zh5-4A-UbJ"/>
                 <constraint firstAttribute="trailing" secondItem="Guv-8M-wff" secondAttribute="trailing" id="aZN-Sf-ms7"/>
                 <constraint firstAttribute="bottom" secondItem="rjN-0H-56r" secondAttribute="bottom" constant="30" id="b8N-eu-9gY"/>
                 <constraint firstItem="Guv-8M-wff" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="c9w-JH-pLD"/>
                 <constraint firstItem="Guv-8M-wff" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="d9x-hD-2kN"/>
                 <constraint firstAttribute="trailing" secondItem="cQD-2Q-pvo" secondAttribute="trailing" id="fiR-iH-AGe"/>
-                <constraint firstItem="I4W-Za-eeq" firstAttribute="width" secondItem="GcT-xj-pVO" secondAttribute="width" id="fwF-nl-56R"/>
                 <constraint firstItem="GcT-xj-pVO" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="fwG-4r-2jI"/>
                 <constraint firstAttribute="bottom" secondItem="GcT-xj-pVO" secondAttribute="bottom" constant="10" id="fyT-yn-Tu6"/>
                 <constraint firstItem="q7X-OF-6SL" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="40" id="g0J-bA-RcC"/>
@@ -313,6 +314,7 @@
                 <constraint firstItem="q7X-OF-6SL" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="n7b-iz-Da1"/>
                 <constraint firstAttribute="trailing" secondItem="GcT-xj-pVO" secondAttribute="trailing" id="tCw-0w-8tY"/>
                 <constraint firstItem="rHA-5m-kkS" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="tGF-Ia-4A0"/>
+                <constraint firstItem="I4W-Za-eeq" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="vSp-Ti-WsT"/>
                 <constraint firstAttribute="trailing" secondItem="q7X-OF-6SL" secondAttribute="trailing" id="wEh-f6-VCE"/>
             </constraints>
             <point key="canvasLocation" x="33.5" y="54.5"/>
