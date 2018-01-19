@@ -17,7 +17,10 @@ public enum mediaType : Int{
 
 
 
-
+public enum privacyLevel : String{
+    case privateFeed = "Private"
+    case publicFeed = "Public"
+}
 public enum bottomType : Int{
     case feed = 0
     case activateStory = 1
@@ -91,14 +94,14 @@ public class feed {
     public var lits:String!
     public var comments:String!
     public var mediaType:mediaType!
-    
+    public var privacyLevel:privacyLevel!
     public var viewers : Int!
     public var branchLink:String!
     public var individualFeedType:individualFeedType!
     
     public var masterIndex : Int!
     public var index : Int!
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?,individualFeedType:individualFeedType){
+    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?,individualFeedType:individualFeedType,privacyLevel:privacyLevel){
         self.individualFeedType = individualFeedType
         self.thumb = thumb
         self.orignalMedia = orignalMedia
@@ -113,6 +116,7 @@ public class feed {
         self.branchLink = branchLink
         self.masterIndex = masterIndex
         self.index = index
+        self.privacyLevel = privacyLevel
     }
     
     

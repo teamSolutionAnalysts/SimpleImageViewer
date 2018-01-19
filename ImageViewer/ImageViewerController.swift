@@ -5,6 +5,7 @@ import Kingfisher
 public final class ImageViewerController: UIViewController {
     
     
+    @IBOutlet weak var imgPrivacy: UIImageView!
     var observerHandler = false
     @IBOutlet fileprivate var scrollView: UIScrollView!
     @IBOutlet fileprivate var imageView: UIImageView!
@@ -192,6 +193,8 @@ public final class ImageViewerController: UIViewController {
             btnLiveViewer.isHidden = true
             self.activateStoryBottom.isHidden = true
         }
+       
+        
     }
     
     func setupeOwnerDetail(user:owner)  {
@@ -281,8 +284,8 @@ public final class ImageViewerController: UIViewController {
             self.btnLiveViewer.setTitle(" \(userFeed.viewers!)", for: .normal)
         }
         self.btnViews.setTitle(" \(userFeed.viewers!)", for: .normal)
-        
-        
+         self.imgPrivacy.isHidden = (self.feedcontant?.feedType  == .story ? false : true)
+        self.imgPrivacy.image = (userFeed.privacyLevel == .publicFeed ? #imageLiteral(resourceName: "public") : #imageLiteral(resourceName: "private"))
         
     }
     func preParevideofor(userFeed:feed, compilation: @escaping videoHandler)  {
