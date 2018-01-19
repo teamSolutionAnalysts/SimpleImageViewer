@@ -230,7 +230,7 @@
                 <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="oPl-2f-Knx">
                     <rect key="frame" x="169" y="315" width="37" height="37"/>
                 </activityIndicatorView>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WNb-8Q-Agl">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="public" translatesAutoresizingMaskIntoConstraints="NO" id="WNb-8Q-Agl">
                     <rect key="frame" x="20" y="602" width="30" height="30"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="30" id="M5h-i2-0w7"/>
@@ -331,5 +331,6 @@
         <image name="img_more" width="26" height="5"/>
         <image name="img_share" width="22" height="19"/>
         <image name="lit" width="25" height="25"/>
+        <image name="public" width="15" height="15"/>
     </resources>
 </document>
