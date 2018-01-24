@@ -4,7 +4,7 @@ import AVKit
 import Kingfisher
 public final class ImageViewerController: UIViewController {
     
-    
+    @IBOutlet weak var imgPrivate: UIImageView!
     @IBOutlet weak var imgPrivacy: UIImageView!
     var observerHandler = false
     @IBOutlet fileprivate var scrollView: UIScrollView!
@@ -163,7 +163,6 @@ public final class ImageViewerController: UIViewController {
             self.btnViews.isHidden = false
             switchWidth.constant = 51
             swichActive.isHidden = false
-            
             btnLike.isHidden = true
             lblLike.isHidden = true
             lblcmt.isHidden = true
@@ -183,18 +182,20 @@ public final class ImageViewerController: UIViewController {
             self.lblActiveSory.text = ""
             self.btnViews.isHidden = false
             swichActive.isHidden = true
-        } else {
-            self.bottomArea.isHidden = true
+        } else {//other story
+            self.bottomArea.isHidden = false
             btnLike.isHidden = true
             lblLike.isHidden = true
             lblcmt.isHidden = true
             btnComment.isHidden = true
             btnShare.isHidden = true
             btnLiveViewer.isHidden = true
-            self.activateStoryBottom.isHidden = true
+            self.activateStoryBottom.isHidden = false
+            switchWidth.constant = 0
+            self.lblActiveSory.text = ""
+            self.btnViews.isHidden = true
+            swichActive.isHidden = true
         }
-       
-        
     }
     
     func setupeOwnerDetail(user:owner)  {
@@ -276,6 +277,7 @@ public final class ImageViewerController: UIViewController {
         }
     }
     func setupFeedDetail(userFeed:feed)   {
+        
         self.lblFeedTime.text =  userFeed.time
         self.lblLike.text = "\(userFeed.lits!) Lits"
         self.lblcmt.text = "\(userFeed.comments!) Comments"
@@ -284,8 +286,20 @@ public final class ImageViewerController: UIViewController {
             self.btnLiveViewer.setTitle(" \(userFeed.viewers!)", for: .normal)
         }
         self.btnViews.setTitle(" \(userFeed.viewers!)", for: .normal)
-         self.imgPrivacy.isHidden = (self.feedcontant?.feedType  == .story ? false : true)
-        self.imgPrivacy.image = (userFeed.privacyLevel == .publicFeed ? #imageLiteral(resourceName: "public") : #imageLiteral(resourceName: "private"))
+        if self.feedcontant?.feedType  == .story {
+            if userFeed.privacyLevel == .publicFeed {
+                self.imgPrivacy.isHidden = false
+                self.imgPrivate.isHidden = true
+            } else {
+                self.imgPrivacy.isHidden = true
+                self.imgPrivate.isHidden = false
+            }
+        } else {
+            self.imgPrivate.isHidden = true
+            self.imgPrivacy.isHidden = true
+        }
+        //         self.imgPrivacy.isHidden = (self.feedcontant?.feedType  == .story ? false : true)
+        //        self.imgPrivacy.image = (userFeed.privacyLevel == .publicFeed ? #imageLiteral(resourceName: "public") : #imageLiteral(resourceName: "private"))
         
     }
     func preParevideofor(userFeed:feed, compilation: @escaping videoHandler)  {
