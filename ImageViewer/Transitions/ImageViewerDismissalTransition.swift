@@ -112,8 +112,10 @@ private extension ImageViewerDismissalTransition {
             case .end:
                 self.animatableImageview.contentMode = self.toImageView.contentMode
                 self.animatableImageview.transform = .identity
-                self.animatableImageview.frame = self.toImageView.superview!.convert(self.toImageView.frame, to: nil)
-                self.fadeView.alpha = 0.0
+                if self.toImageView.superview != nil {
+                    self.animatableImageview.frame = self.toImageView.superview!.convert(self.toImageView.frame, to: nil)
+                    self.fadeView.alpha = 0.0
+                }
             }
         }
     }
