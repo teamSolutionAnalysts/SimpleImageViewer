@@ -205,7 +205,8 @@ public final class ImageViewerController: UIViewController {
             self.lblActiveSory.text = ""
             self.btnViews.isHidden = true
             swichActive.isHidden = true
-            self.btnGoLive.isHidden = false
+//            self.btnGoLive.isHidden = false
+            self.btnGoLive.isHidden = self.feedcontant?.isFromNotification == true ? true : false
             self.btnGoLive.layer.borderWidth = 0.5
             DispatchQueue.main.async {
                 self.btnGoLive.layer.cornerRadius = self.btnGoLive.frame.size.height/2

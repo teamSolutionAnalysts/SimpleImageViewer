@@ -82,6 +82,7 @@ public final class feedContant {
     public var bottomtype:bottomType = .none
     public  var owner:owner!
     public  var ownerType:OwnerType!
+    public var isFromNotification: Bool = false
     public init(feedClosure: feedContantClosure) {
         feedClosure(self)
     }
