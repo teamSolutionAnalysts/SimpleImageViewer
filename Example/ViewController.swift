@@ -45,8 +45,8 @@ class ViewController: UICollectionViewController, UICollectionViewDelegateFlowLa
       
         let  feedq = feedContant{ feeds in
             if indexPath.row == 0{
-                let feed1 = feed.init(thumb: "", orignalMedia: "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg", feedId: "", time: "100 years ago", discription: "Awesome Image", lits: "50", comments: "100", mediaType: .image, owner: feedOwner, type: .feed,duration: 5, viewers: 50, branchLink: "", masterIndex: 0, index: 0, individualFeedType: .storyImage, privacyLevel: privacyLevel.init(rawValue: "Public")!)
-                let feed2 = feed.init(thumb: "", orignalMedia: "https://d24lih7hes6i11.cloudfront.net/story/e1134d90-e581-11e7-8c84-69462caf78c2/Xazkp8mgKOd06rts5Tq0GdCV.mp4", feedId: "", time: "100 years ago", discription: "Awesome Video", lits: "50", comments: "100", mediaType: .video, owner: feedOwner, type: .feed,duration: 7, viewers: 50, branchLink: "", masterIndex: 0, index: 0, individualFeedType:.storyVideo , privacyLevel: privacyLevel.init(rawValue: "Public")!)
+                let feed1 = feed.init(seenStoryId: "", thumbId: "", thumb: "", orignalMedia: "https://dev-itzlit.s3.amazonaws.com/story/941ecab0-cf87-11e7-b5fb-0f80c7125ff0/9-jxYN6y2vRF2mSBj7eRGGrh.jpg", feedId: "", time: "100 years ago", discription: "Awesome Image", lits: "50", comments: "100", mediaType: .image, owner: feedOwner, type: .feed,duration: 5, viewers: 50, branchLink: "", masterIndex: 0, index: 0, individualFeedType: .storyImage, privacyLevel: privacyLevel.init(rawValue: "Public")!)
+                let feed2 = feed.init(seenStoryId: "", thumbId: "", thumb: "", orignalMedia: "https://d24lih7hes6i11.cloudfront.net/story/e1134d90-e581-11e7-8c84-69462caf78c2/Xazkp8mgKOd06rts5Tq0GdCV.mp4", feedId: "", time: "100 years ago", discription: "Awesome Video", lits: "50", comments: "100", mediaType: .video, owner: feedOwner, type: .feed,duration: 7, viewers: 50, branchLink: "", masterIndex: 0, index: 0, individualFeedType:.storyVideo , privacyLevel: privacyLevel.init(rawValue: "Public")!)
 //              let  item = AVPlayerItem(url: URL(string: "http://techslides.com/demos/sample-videos/small.mp4")!)
 //                let duration : CMTime = item.asset.duration
 //let seconds : Float64 = CMTimeGetSeconds(duration)
@@ -134,6 +134,14 @@ private extension UIViewContentMode {
     }
 }
 extension ViewController:ActionDelegate{
+    func sendGoLiveRequest(index: Int) {
+        
+    }
+    
+    func markAsStroySeenAt(masterIndex: Int, index: Int) {
+        
+    }
+    
     func actionTrigered(action: actionType, masterIndex: Int?, index: Int?, feedId: String, mediaUrl: String, base: UIViewController, baseFeedType: feedType) {
         
     }

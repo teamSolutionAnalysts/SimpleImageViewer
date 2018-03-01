@@ -45,6 +45,8 @@ public protocol ActionDelegate {
     func shouldMakeIt(active:Bool,feedId:String)
     func markAsViewed(feedId:String)
     func startListen(action:actionType,feedId:String)
+    func sendGoLiveRequest(index:Int)
+    func markAsStroySeenAt(masterIndex:Int,index:Int)
 }
 public enum feedType:Int{
     case story = 0
@@ -69,6 +71,7 @@ public enum actionType:Int{
     case more = 3
     case viewerList = 4
     case Listen = 5
+    case golive = 6
 }
 public final class feedContant {
     
@@ -82,9 +85,11 @@ public final class feedContant {
     public init(feedClosure: feedContantClosure) {
         feedClosure(self)
     }
-    
+    public var arrGoLiveID : [String] = []
 }
+
 public class feed {
+    public var thumbId: String!
     public var duration:TimeInterval
     public var thumb:String!
     public var orignalMedia:String!
@@ -101,7 +106,10 @@ public class feed {
     
     public var masterIndex : Int!
     public var index : Int!
-    public init(thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?,individualFeedType:individualFeedType,privacyLevel:privacyLevel){
+    public var seenStoryId: String!
+    public init(seenStoryId: String, thumbId: String,thumb:String,orignalMedia:String,feedId:String,time:String,discription:String,lits:String,comments:String,mediaType:mediaType,owner:owner,type:bottomType,duration:TimeInterval,viewers:Int,branchLink:String,masterIndex:Int?,index:Int?,individualFeedType:individualFeedType,privacyLevel:privacyLevel){
+        self.seenStoryId = seenStoryId
+        self.thumbId = thumbId
         self.individualFeedType = individualFeedType
         self.thumb = thumb
         self.orignalMedia = orignalMedia

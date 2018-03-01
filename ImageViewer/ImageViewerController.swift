@@ -2,8 +2,12 @@ import UIKit
 import AVFoundation
 import AVKit
 import Kingfisher
+
 public final class ImageViewerController: UIViewController {
     
+    @IBOutlet weak var imgItzlit: UIImageView!
+    @IBOutlet weak var vwCalloutMessage: UIView!
+    @IBOutlet weak var btnGoLive: UIButton!
     @IBOutlet weak var imgPrivate: UIImageView!
     @IBOutlet weak var imgPrivacy: UIImageView!
     var observerHandler = false
@@ -38,8 +42,8 @@ public final class ImageViewerController: UIViewController {
     @IBOutlet weak var lblLike: UILabel!
     @IBOutlet weak var activateStoryBottom: UIView!
     @IBOutlet weak var bottomArea: UIView!
-    
-    
+    var goLiveUserId: String = ""
+    var arrGoLiveUserId: [String] = []
     public override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -55,6 +59,7 @@ public final class ImageViewerController: UIViewController {
     public init(configuration: ImageViewerConfiguration?,contant:feedContant?) {
         self.configuration = configuration
         self.feedcontant = contant
+        self.arrGoLiveUserId = contant!.arrGoLiveID
         self.feedList = self.feedcontant?.feedList
         super.init(nibName: String(describing: type(of: self)), bundle: Bundle(for: type(of: self)))
         
@@ -140,6 +145,7 @@ public final class ImageViewerController: UIViewController {
     func setupBottom()  {
         
         if self.feedcontant?.bottomtype == .feed {//
+            self.imgItzlit.isHidden = false
             self.bottomArea.isHidden = false
             btnLike.isHidden = false
             lblLike.isHidden = false
@@ -149,6 +155,7 @@ public final class ImageViewerController: UIViewController {
             btnLiveViewer.isHidden = false
             self.activateStoryBottom.isHidden = true
             btnShare.isHidden =  self.feedList![currentIndex].branchLink.count > 0 ? false : true
+            self.btnGoLive.isHidden = true
         }else if self.feedcontant?.bottomtype == .activateStory {
             self.bottomArea.isHidden = true
             self.activateStoryBottom.isHidden = false
@@ -156,11 +163,12 @@ public final class ImageViewerController: UIViewController {
             self.lblActiveSory.text = "Activate this story"
             switchWidth.constant = 51
             swichActive.isHidden = false
+            self.btnGoLive.isHidden = true
         } else if self.feedcontant?.bottomtype == .activateStoryWithEye {//own story
             self.bottomArea.isHidden = false
             self.activateStoryBottom.isHidden = false
             self.lblActiveSory.text = "Activate this story"
-            self.btnViews.isHidden = false
+            self.btnViews.isHidden = true//false
             switchWidth.constant = 51
             swichActive.isHidden = false
             btnLike.isHidden = true
@@ -169,6 +177,7 @@ public final class ImageViewerController: UIViewController {
             btnComment.isHidden = true
             btnShare.isHidden = true
             btnLiveViewer.isHidden = true
+            self.btnGoLive.isHidden = true
         } else if self.feedcontant?.bottomtype == .eye {//own story
             self.bottomArea.isHidden = false
             btnLike.isHidden = true
@@ -180,8 +189,9 @@ public final class ImageViewerController: UIViewController {
             self.activateStoryBottom.isHidden = false
             switchWidth.constant = 0
             self.lblActiveSory.text = ""
-            self.btnViews.isHidden = false
+            self.btnViews.isHidden = true//false
             swichActive.isHidden = true
+            self.btnGoLive.isHidden = true
         } else {//other story
             self.bottomArea.isHidden = false
             btnLike.isHidden = true
@@ -195,6 +205,16 @@ public final class ImageViewerController: UIViewController {
             self.lblActiveSory.text = ""
             self.btnViews.isHidden = true
             swichActive.isHidden = true
+            self.btnGoLive.isHidden = false
+            self.btnGoLive.layer.borderWidth = 0.5
+            DispatchQueue.main.async {
+                self.btnGoLive.layer.cornerRadius = self.btnGoLive.frame.size.height/2
+            }
+            self.btnGoLive.layer.borderColor = UIColor.white.cgColor
+            self.btnGoLive.clipsToBounds = true
+            print("owner type at bottom method  : ", self.feedcontant?.ownerType == .other)
+            self.vwCalloutMessage.isHidden = false
+            //            self.vwCalloutMessage.isHidden = self.feedcontant?.ownerType == .other ? false : true
         }
     }
     
@@ -225,7 +245,6 @@ public final class ImageViewerController: UIViewController {
                             self.viewed = true
                             self.configuration?.actiondelegate?.markAsViewed(feedId: selectedFeed.feedId)
                         }
-                        
                     }
                     if  self.spb != nil{
                         self.spb.isPaused = false
@@ -257,6 +276,7 @@ public final class ImageViewerController: UIViewController {
         }
         setupFeedDetail(userFeed: selectedFeed)
     }
+    
     @objc func updateCounters(_ notification: Notification)  {
         print(notification.object as Any , notification.userInfo as Any)
         if ( notification.object! as! [String:Any])["type"] as! actionType == .like && ( notification.object! as! [String:Any])["feedId"] as! String == self.feedList![currentIndex].feedId  {
@@ -266,42 +286,84 @@ public final class ImageViewerController: UIViewController {
             dismissAll()
         } else if ( notification.object! as! [String:Any])["type"] as! actionType == .Listen {
             let total = (notification.object! as! [String:Any])["users"] as! String
-            
             self.btnLiveViewer.isHidden = false
             self.btnLiveViewer.setTitle("   \(total)", for: .normal)
             
         } else if ( notification.object! as! [String:Any])["type"] as! actionType == .comment {
             let total = (notification.object! as! [String:Any])["count"] as! Int
             self.lblcmt.text = "\(total) Comments"
-            
+        } else if (notification.object! as! [String:Any])["type"] as! actionType == .golive {
+            if let goLiveUserId = ((notification.object! as! [String:Any])["goLiveUser"]) as? String {
+                self.goLiveUserId = goLiveUserId
+                self.arrGoLiveUserId.append(self.goLiveUserId)
+                if self.feedList![currentIndex].feedId == self.goLiveUserId {
+                    self.btnGoLive.setTitle(nil, for: .normal)
+                    self.btnGoLive.isSelected = true
+                    self.setRediusWith(color: UIColor.clear)
+                } else {
+                    self.btnGoLive.isSelected = false
+                    self.btnGoLive.setTitle("Go Live!", for: .normal)
+                    self.setRediusWith(color: UIColor.white)
+                }
+            } else {
+                print("nothing")
+            }
         }
     }
+    
     func setupFeedDetail(userFeed:feed)   {
         
         self.lblFeedTime.text =  userFeed.time
         self.lblLike.text = "\(userFeed.lits!) Lits"
         self.lblcmt.text = "\(userFeed.comments!) Comments"
         self.lblDiscription.text = userFeed.discription!
-        if userFeed.individualFeedType == .liveStreamVideo{
+        if userFeed.individualFeedType == .liveStreamVideo {
             self.btnLiveViewer.setTitle(" \(userFeed.viewers!)", for: .normal)
         }
         self.btnViews.setTitle(" \(userFeed.viewers!)", for: .normal)
         if self.feedcontant?.feedType  == .story {
+            
+            //            if self.feedList![currentIndex].feedId == self.goLiveUserId || self.feedList![currentIndex].seenStoryId == self.feedList![currentIndex].feedId {
+            if self.arrGoLiveUserId.contains(userFeed.feedId) {
+                
+                self.setRediusWith(color: UIColor.clear)
+                self.btnGoLive.setTitle(nil, for: .normal)
+                self.btnGoLive.isSelected = true
+            } else {
+                self.setRediusWith(color: UIColor.white)
+                self.btnGoLive.isSelected = false
+                self.btnGoLive.setTitle("Go Live!", for: .normal)
+            }
+            
             if userFeed.privacyLevel == .publicFeed {
                 self.imgPrivacy.isHidden = false
                 self.imgPrivate.isHidden = true
+                self.vwCalloutMessage.isHidden = true
             } else {
                 self.imgPrivacy.isHidden = true
                 self.imgPrivate.isHidden = false
+                self.vwCalloutMessage.isHidden = false
             }
         } else {
             self.imgPrivate.isHidden = true
             self.imgPrivacy.isHidden = true
+            self.vwCalloutMessage.isHidden = true
         }
         //         self.imgPrivacy.isHidden = (self.feedcontant?.feedType  == .story ? false : true)
         //        self.imgPrivacy.image = (userFeed.privacyLevel == .publicFeed ? #imageLiteral(resourceName: "public") : #imageLiteral(resourceName: "private"))
         
     }
+    
+    func setRediusWith(color:UIColor)  {
+        self.btnGoLive.layer.borderWidth = 0.5
+        DispatchQueue.main.async {
+            self.btnGoLive.layer.cornerRadius = (color == UIColor.clear ? 0 : self.btnGoLive.frame.size.height/2)
+        }
+        
+        self.btnGoLive.layer.borderColor = color.cgColor
+        self.btnGoLive.clipsToBounds = true
+    }
+    
     func preParevideofor(userFeed:feed, compilation: @escaping videoHandler)  {
         
         self.item = AVPlayerItem(url: URL(string: (userFeed.orignalMedia)!)!)
@@ -334,8 +396,7 @@ public final class ImageViewerController: UIViewController {
             
             if self?.player.currentItem?.status == AVPlayerItemStatus.readyToPlay {
                 
-                if let isPlaybackLikelyToKeepUp = self?.player.currentItem?.isPlaybackLikelyToKeepUp {
-                    print(isPlaybackLikelyToKeepUp)
+                if let _ = self?.player.currentItem?.isPlaybackLikelyToKeepUp {
                     //do what ever you want with isPlaybackLikelyToKeepUp value, for example, show or hide a activity indicator.
                     self?.activityIndicator.stopAnimating()
                     if self?.spb != nil {
@@ -401,7 +462,7 @@ public final class ImageViewerController: UIViewController {
     //            }
     //        }
     //    }
-    func dismissAll()  {
+    func dismissAll() {
         if observerHandler {
             if self.observer != nil {
                 self.player.removeTimeObserver(self.observer)
@@ -410,23 +471,25 @@ public final class ImageViewerController: UIViewController {
         }
         self.dismiss(animated: true, completion: {
             UIApplication.shared.isStatusBarHidden = false
+            
+            if self.configuration?.actiondelegate != nil && self.feedcontant?.bottomtype != .eye && self.feedcontant?.bottomtype != .activateStoryWithEye {
+                self.configuration?.actiondelegate?.markAsStroySeenAt(masterIndex: self.feedList![self.currentIndex].masterIndex, index: self.feedList![self.currentIndex].index)
+            }
             if (self.feedcontant?.turnSoket)! {
                 if self.configuration?.actiondelegate != nil {
                     self.configuration?.actiondelegate?.startListen(action: .Listen, feedId: "")
                 }
             }
-            
         })
     }
+    
     @IBAction func btntestA(_ sender: UIButton) {
         if self.configuration?.actiondelegate != nil {
-            
-            
             self.configuration?.actiondelegate?.actionTrigered(action: actionType(rawValue: sender.tag)!, masterIndex: self.feedList![currentIndex].masterIndex , index: self.feedList![currentIndex].index , feedId: self.feedList![currentIndex].feedId, mediaUrl: self.feedList![currentIndex].branchLink , base: self, baseFeedType: (self.feedcontant?.feedType)!)
         }
     }
+    
     @IBAction func swichAction(_ sender: UISwitch) {
-        print(sender.isOn)
         sender.isUserInteractionEnabled = false
         if self.configuration?.actiondelegate != nil {
             self.configuration?.actiondelegate?.shouldMakeIt(active: sender.isOn, feedId: self.feedList![currentIndex].feedId)
@@ -511,6 +574,10 @@ private extension ImageViewerController {
         bottomArea.addGestureRecognizer(panGestureRecognizerbottomArea)
         
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(imageViewtappedView(_:))))
+        
+        let tapGestureForPrivateImage = UITapGestureRecognizer(target: self, action: #selector(imgPrivateTappedAction(_:)))
+        self.imgPrivate.addGestureRecognizer(tapGestureForPrivateImage)
+        //        self.feedcontant?.ownerType == OwnerType.other ? self.imgPrivate.addGestureRecognizer(tapGestureForPrivateImage) : nil
     }
     
     func setupTransitions() {
@@ -667,6 +734,12 @@ private extension ImageViewerController {
         default: break
         }
     }
+    
+    @objc func imgPrivateTappedAction(_ sender: UITapGestureRecognizer) {
+        if sender.state == .recognized {
+            self.vwCalloutMessage.isHidden = !self.vwCalloutMessage.isHidden
+        }
+    }
 }
 extension ImageViewerController:SegmentedProgressBarDelegate{
     
@@ -724,6 +797,3 @@ extension ImageViewerController:SegmentedProgressBarDelegate{
         self.display(selectedFeed: (self.feedList?[index])!)
     }
 }
-
-
-

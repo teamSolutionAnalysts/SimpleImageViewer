@@ -13,6 +13,7 @@ target 'SimpleImageViewer' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
 pod 'Kingfisher'
+pod 'SQLite.swift', '~> 0.11.4'
   # Pods for SimpleImageViewer
 
   target 'SimpleImageViewerTests' do
